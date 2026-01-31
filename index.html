@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>P. A. Barczewska</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --radius: 18px;
+  --shadow: 0 18px 60px rgba(0,0,0,0.25);
+}
+
+*{ box-sizing:border-box; }
+
+body{
+  margin:0;
+  font-family:"Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color:#151515;
+
+  background-image:url("file_000000006408722fa2ddd16807e0f8b7.png");
+  background-size:cover;
+  background-position:center;
+  background-attachment:fixed;
+  min-height:100vh;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:rgba(10,10,12,0.45);
+  z-index:-1;
+}
+
+/* HEADER */
+header{
+  max-width:980px;
+  margin:24px auto 0;
+  padding:0 18px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  color:#fff;
+}
+
+.logo{
+  width:64px;
+  height:64px;
+  border-radius:50%;
+  background:#fff;
+  object-fit:cover;
+  box-shadow:0 10px 30px rgba(0,0,0,0.3);
+  flex:0 0 auto;
+  cursor:pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+header h1{
+  font-family:"Playfair Display", serif;
+  font-size:1.5rem;
+  margin:0;
+  line-height:1.1;
+}
+
+header p{
+  margin:4px 0 0;
+  font-size:0.95rem;
+  opacity:0.9;
+}
+
+/* HERO */
+.hero{
+  max-width:980px;
+  margin:18px auto 0;
+  padding:84px 18px 64px;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  background:rgba(255,255,255,0.10);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border:1px solid rgba(255,255,255,0.12);
+  text-align:center;
+}
+
+.hero h2{
+  font-family:"Playfair Display", serif;
+  font-size:2.35rem;
+  color:#fff;
+  margin:0 0 10px;
+}
+
+.hero p{
+  color:rgba(255,255,255,0.92);
+  font-size:1.05rem;
+  margin:0;
+  font-weight:300;
+}
+
+/* MAIN + SECTIONS */
+main{
+  max-width:980px;
+  margin:30px auto 70px;
+  padding:0 18px;
+}
+
+section{
+  background:rgba(255,255,255,0.64);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border:1px solid rgba(255,255,255,0.25);
+
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:26px 22px;
+  margin-top:20px;
+}
+
+section h2{
+  font-family:"Playfair Display", serif;
+  font-size:1.5rem;
+  margin:0 0 14px;
+}
+
+section p{
+  font-size:0.97rem;
+  line-height:1.7;
+  margin:0 0 12px;
+}
+
+.work-block{
+  margin-top:18px;
+  padding-top:14px;
+  border-top:1px solid rgba(0,0,0,0.15);
+}
+
+.work-block h3{
+  font-family:"Playfair Display", serif;
+  font-size:1.15rem;
+  margin:0 0 8px;
+}
+
+.work-status{
+  margin-top:18px;
+  font-style:italic;
+  opacity:0.75;
+}
+
+/* LISTA TEKSTÓW */
+.post-preview{
+  margin-top:22px;
+  padding-top:18px;
+  border-top:1px solid rgba(0,0,0,0.15);
+}
+
+.post-preview h3{
+  font-family:"Playfair Display", serif;
+  font-size:1.2rem;
+  margin:0 0 6px;
+}
+
+.post-preview .excerpt{
+  font-size:0.95rem;
+  line-height:1.6;
+  opacity:0.9;
+  margin:0 0 10px;
+}
+
+.read-more{
+  display:inline-block;
+  font-size:0.9rem;
+  text-decoration:none;
+  color:#111;
+  font-weight:500;
+  border-bottom:1px solid rgba(0,0,0,0.4);
+  padding-bottom:2px;
+}
+
+.read-more:hover{ opacity:0.7; }
+
+/* FOOTER */
+footer{
+  max-width:980px;
+  margin:26px auto 60px;
+  padding:0 18px;
+  color:rgba(255,255,255,0.80);
+  font-size:0.9rem;
+  text-align:center;
+}
+
+/* MOBILE */
+@media (max-width:520px){
+  .hero h2{ font-size:2rem; }
+  section{ padding:22px 18px; }
+  header h1{ font-size:1.35rem; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <img id="secretLogo" class="logo" src="file_000000001f04720c8a514e8f7c6decad.png" alt="Logo P. A. Barczewska">
+  <div>
+    <h1>P. A. Barczewska</h1>
+    <p>Pisarka emocji. Kryminologia z ciekawości.</p>
+  </div>
+</header>
+
+<div class="hero">
+  <h2>P. A. Barczewska</h2>
+  <p>Pisarka emocji. Kryminologia z ciekawości.</p>
+</div>
+
+<main>
+
+  <section>
+    <h2>O mnie</h2>
+
+    <p>
+      Piszę o emocjach, relacjach i o tym, co dzieje się z człowiekiem
+      w momentach granicznych. Interesuje mnie to, co niewypowiedziane —
+      napięcia, decyzje podejmowane w ciszy, drobne pęknięcia,
+      które zmieniają bieg historii.
+    </p>
+
+    <p>
+      Kryminologia jest dla mnie narzędziem myślenia. Ukończone studia
+      pozwoliły mi lepiej rozumieć mechanizmy przemocy, wiktymologii
+      oraz zachowań ludzkich, ale nie po to, by oceniać czy pouczać.
+      To zaplecze poznawcze, które porządkuje ciekawość
+      i pogłębia spojrzenie.
+    </p>
+
+    <p>
+      Nie udzielam porad ani diagnoz. Pokazuję warsztat, sposób patrzenia
+      i pytania, które sobie stawiam — zarówno w literaturze,
+      jak i w refleksji nad rzeczywistością.
+    </p>
+  </section>
+
+  <section>
+    <h2>Twórczość</h2>
+
+    <div class="work-block">
+      <h3>Kryminał / psychologia</h3>
+      <p>
+        Najbliższy jest mi kryminał oparty na emocjach i perspektywie
+        człowieka, nie na samej zbrodni. Interesują mnie motywacje,
+        relacje władzy, mechanizmy przemocy i to, jak łatwo granice
+        się przesuwają.
+      </p>
+    </div>
+
+    <div class="work-block">
+      <h3>Romans</h3>
+      <p>
+        Romans traktuję jako przestrzeń do opowiadania o bliskości,
+        zależnościach i potrzebie bycia widzianym. To historie
+        o napięciu emocjonalnym, wyborach i konsekwencjach,
+        które nie zawsze są oczywiste ani wygodne.
+      </p>
+    </div>
+
+    <div class="work-block">
+      <h3>Horror</h3>
+      <p>
+        Horror pojawia się tam, gdzie strach nie jest krzykiem,
+        lecz ciszą. Bardziej interesuje mnie niepokój niż dosłowność —
+        moment, w którym coś zaczyna się wymykać,
+        a czytelnik czuje, że nie wszystko zostało nazwane.
+      </p>
+    </div>
+
+    <p class="work-status">
+      Publikuję swoje teksty i jednocześnie pracuję nad kolejnymi projektami.
+      Niektóre historie są zamknięte, inne wciąż się piszą —
+      bo proces twórczy jest dla mnie równie ważny jak efekt końcowy.
+    </p>
+  </section>
+
+  <section>
+    <h2>Teksty</h2>
+
+    <!-- Wpis 1 -->
+    <article class="post-preview">
+      <h3>Najlepsze rzeczy dzieją się w ciszy</h3>
+      <p class="excerpt">
+        Czasem nie potrzeba odpowiedzi. Wystarczy zostać na chwilę
+        w miejscu, w którym coś zaczyna być prawdziwe…
+      </p>
+      <a class="read-more" href="teksty/najlepsze-rzeczy.html">Czytaj dalej</a>
+    </article>
+
+    <!-- Wpis 2 -->
+    <article class="post-preview">
+      <h3>Między strachem a decyzją</h3>
+      <p class="excerpt">
+        Każda decyzja ma swój moment graniczny.
+        Ten, w którym ciało wie wcześniej niż my…
+      </p>
+      <a class="read-more" href="teksty/miedzy-strachem.html">Czytaj dalej</a>
+    </article>
+
+  </section>
+
+</main>
+
+<footer>© <span id="year"></span> P. A. Barczewska</footer>
+
+<script>
+  // Rok w stopce
+  const y = document.getElementById("year");
+  if (y) y.textContent = new Date().getFullYear();
+
+  // 4 tapnięcia w logo -> /admin/
+  (function () {
+    function bind() {
+      const logo = document.getElementById("secretLogo");
+      if (!logo) return;
+
+      let clicks = 0;
+      let timer = null;
+
+      function handler(e){
+        e.preventDefault();
+        e.stopPropagation();
+
+        clicks++;
+        clearTimeout(timer);
+        timer = setTimeout(() => { clicks = 0; }, 1500);
+
+        if (clicks >= 4){
+          clicks = 0;
+          window.location.href = "/admin/";
+        }
+      }
+
+      logo.addEventListener("touchend", handler, { passive:false });
+      logo.addEventListener("click", handler);
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", bind);
+    } else {
+      bind();
+    }
+  })();
+</script>
+
+</body>
+</html>
