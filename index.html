@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>P. A. Barczewska</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -150,6 +151,38 @@ section p{
   opacity:0.75;
 }
 
+/* LISTA TEKSTÓW */
+.post-preview{
+  margin-top:22px;
+  padding-top:18px;
+  border-top:1px solid rgba(0,0,0,0.15);
+}
+
+.post-preview h3{
+  font-family:"Playfair Display", serif;
+  font-size:1.2rem;
+  margin:0 0 6px;
+}
+
+.post-preview .excerpt{
+  font-size:0.95rem;
+  line-height:1.6;
+  opacity:0.9;
+  margin:0 0 10px;
+}
+
+.read-more{
+  display:inline-block;
+  font-size:0.9rem;
+  text-decoration:none;
+  color:#111;
+  font-weight:500;
+  border-bottom:1px solid rgba(0,0,0,0.4);
+  padding-bottom:2px;
+}
+
+.read-more:hover{ opacity:0.7; }
+
 /* FOOTER */
 footer{
   max-width:980px;
@@ -251,6 +284,31 @@ footer{
     </p>
   </section>
 
+  <section>
+    <h2>Teksty</h2>
+
+    <!-- Wpis 1 -->
+    <article class="post-preview">
+      <h3>Najlepsze rzeczy dzieją się w ciszy</h3>
+      <p class="excerpt">
+        Czasem nie potrzeba odpowiedzi. Wystarczy zostać na chwilę
+        w miejscu, w którym coś zaczyna być prawdziwe…
+      </p>
+      <a class="read-more" href="teksty/najlepsze-rzeczy.html">Czytaj dalej</a>
+    </article>
+
+    <!-- Wpis 2 -->
+    <article class="post-preview">
+      <h3>Między strachem a decyzją</h3>
+      <p class="excerpt">
+        Każda decyzja ma swój moment graniczny.
+        Ten, w którym ciało wie wcześniej niż my…
+      </p>
+      <a class="read-more" href="teksty/miedzy-strachem.html">Czytaj dalej</a>
+    </article>
+
+  </section>
+
 </main>
 
 <footer>© <span id="year"></span> P. A. Barczewska</footer>
@@ -269,11 +327,6 @@ footer{
       let clicks = 0;
       let timer = null;
 
-      function goAdmin() {
-        alert("OK — admin");
-        window.location.href = "/admin/";
-      }
-
       function handler(e){
         e.preventDefault();
         e.stopPropagation();
@@ -284,7 +337,7 @@ footer{
 
         if (clicks >= 4){
           clicks = 0;
-          goAdmin();
+          window.location.href = "/admin/";
         }
       }
 
