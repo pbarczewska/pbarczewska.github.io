@@ -1,1 +1,95 @@
 
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Panel – P. A. Barczewska</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --radius: 18px;
+      --shadow: 0 18px 60px rgba(0,0,0,0.25);
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family:"Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:#151515;
+
+      /* to samo tło co na stronie */
+      background-image:url("/file_000000006408722fa2ddd16807e0f8b7.png");
+      background-size:cover;
+      background-position:center;
+      background-attachment:fixed;
+      min-height:100vh;
+    }
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      background:rgba(10,10,12,0.45);
+      z-index:-1;
+    }
+    .wrap{
+      max-width: 860px;
+      margin: 40px auto;
+      padding: 0 18px;
+    }
+    .card{
+      background: rgba(255,255,255,0.70);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,0.25);
+
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 26px 22px;
+    }
+    h1{
+      font-family:"Playfair Display", serif;
+      margin:0 0 10px;
+      font-size: 1.8rem;
+    }
+    p{ margin:0 0 12px; line-height:1.7; }
+    .hint{
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(0,0,0,0.15);
+      opacity: 0.85;
+      font-size: 0.95rem;
+    }
+    a.btn{
+      display:inline-block;
+      margin-top: 10px;
+      text-decoration:none;
+      background: rgba(0,0,0,0.80);
+      color:#fff;
+      padding: 10px 14px;
+      border-radius: 12px;
+    }
+    a.btn:active{ transform: translateY(1px); }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Panel autorski</h1>
+      <p>To miejsce jest przeznaczone wyłącznie dla właścicielki strony.</p>
+      <p>Na tym etapie panel jest przygotowany jako „wejście”. Kolejny krok to dodanie prostego edytora, w którym będzie można wklejać tekst i publikować go na stronie.</p>
+
+      <a class="btn" href="/">Wróć na stronę główną</a>
+
+      <div class="hint">
+        <strong>Info techniczne (dla Ciebie):</strong><br>
+        404 zniknęło, bo teraz istnieje /admin/. Następny etap to wpięcie panelu publikacji (logowanie + „opublikuj”).
+      </div>
+    </div>
+  </div>
+</body>
+</html>
