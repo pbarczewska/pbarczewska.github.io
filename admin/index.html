@@ -1,116 +1,108 @@
 <!doctype html>
 <html lang="pl">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Panel autorski – P. A. Barczewska</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Panel autorski</title>
 
-  <style>
-    :root{
-      --radius: 18px;
-      --shadow: 0 18px 60px rgba(0,0,0,0.25);
-    }
-    *{ box-sizing:border-box; }
-    body{
-      margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      color:#151515;
+<style>
+:root{
+  --radius: 18px;
+  --shadow: 0 18px 60px rgba(0,0,0,0.25);
+}
 
-      background-image:url("/file_000000006408722fa2ddd16807e0f8b7.png");
-      background-size:cover;
-      background-position:center;
-      background-attachment:fixed;
-      min-height:100vh;
-    }
-    body::before{
-      content:"";
-      position:fixed;
-      inset:0;
-      background:rgba(10,10,12,0.45);
-      z-index:-1;
-    }
-    .wrap{
-      max-width: 860px;
-      margin: 40px auto;
-      padding: 0 18px;
-    }
-    .card{
-      background: rgba(255,255,255,0.70);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      border: 1px solid rgba(255,255,255,0.25);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 26px 22px;
-    }
-    h1{
-      margin:0 0 10px;
-      font-size: 1.8rem;
-      line-height: 1.15;
-    }
-    p{
-      margin:0 0 12px;
-      line-height:1.7;
-    }
-    button.btn{
-      display:inline-block;
-      margin-top: 10px;
-      border:0;
-      background: rgba(0,0,0,0.82);
-      color:#fff;
-      padding: 12px 14px;
-      border-radius: 12px;
-      font-size: 1rem;
-      cursor:pointer;
-    }
-    button.btn:active{ transform: translateY(1px); }
-    .note{
-      margin-top: 16px;
-      padding-top: 14px;
-      border-top: 1px solid rgba(0,0,0,0.15);
-      opacity: 0.85;
-      font-size: 0.95rem;
-    }
-    .fallback a{
-      color:#111;
-      font-weight:600;
-    }
-  </style>
+*{ box-sizing:border-box; }
+
+body{
+  margin:0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color:#151515;
+
+  background-image:url("/file_000000006408722fa2ddd16807e0f8b7.png");
+  background-size:cover;
+  background-position:center;
+  background-attachment:fixed;
+  min-height:100vh;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:rgba(10,10,12,0.45);
+  z-index:-1;
+}
+
+.wrap{
+  max-width:860px;
+  margin:40px auto;
+  padding:0 18px;
+}
+
+.card{
+  background:rgba(255,255,255,0.70);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border:1px solid rgba(255,255,255,0.25);
+
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:26px 22px;
+}
+
+h1{
+  margin:0 0 12px;
+  font-size:1.8rem;
+  line-height:1.15;
+}
+
+p{
+  margin:0 0 12px;
+  line-height:1.7;
+}
+
+a.btn{
+  display:inline-block;
+  margin-top:14px;
+  text-decoration:none;
+  background:rgba(0,0,0,0.82);
+  color:#fff;
+  padding:12px 16px;
+  border-radius:12px;
+}
+
+.note{
+  margin-top:18px;
+  padding-top:14px;
+  border-top:1px solid rgba(0,0,0,0.15);
+  opacity:0.8;
+  font-size:0.95rem;
+}
+</style>
 </head>
 
 <body>
-  <div class="wrap">
-    <div class="card">
-      <h1>Panel autorski</h1>
 
-      <p>To prywatna przestrzeń przeznaczona wyłącznie dla właścicielki strony.</p>
-      <p>W kolejnych etapach pojawi się tutaj proste miejsce do dodawania i publikowania tekstów.</p>
+<div class="wrap">
+  <div class="card">
+    <h1>Panel autorski</h1>
 
-      <!-- ZAMIANA: przycisk sterowany JS (wymusza normalne przejście + omija cache) -->
-      <button class="btn" id="goHome">Wróć na stronę główną</button>
+    <p>
+      To prywatna przestrzeń przeznaczona wyłącznie dla właścicielki strony.
+    </p>
 
-      <div class="note">
-        Jeśli przeglądarka czasem pokazuje „białą” wersję strony, ten przycisk wymusza pełne przeładowanie.
-        <div class="fallback" style="margin-top:10px;">
-          Gdyby JavaScript był wyłączony: <a href="https://pbarczewska.github.io/indexpa.html" target="_top" rel="noopener">otwórz stronę tutaj</a>.
-        </div>
-      </div>
+    <p>
+      W kolejnych etapach pojawi się tutaj proste miejsce do dodawania
+      i publikowania tekstów.
+    </p>
+
+    <a class="btn" href="/">← Wróć na stronę główną</a>
+
+    <div class="note">
+      Ten panel jest aktywny. Jeśli widzisz tę stronę, dostęp działa poprawnie.
     </div>
   </div>
+</div>
 
-  <script>
-    (function () {
-      var btn = document.getElementById("goHome");
-      if (!btn) return;
-
-      btn.addEventListener("click", function () {
-        // cache-busting: wymusza pobranie świeżej wersji
-        var url = "https://pbarczewska.github.io/indexpa.html?v=" + Date.now();
-
-        // replace -> mniej bugów niż zwykły href w webview
-        window.location.replace(url);
-      });
-    })();
-  </script>
 </body>
 </html>
