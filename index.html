@@ -2,267 +2,194 @@
 <html lang="pl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>P. A. Barczewska</title>
+  <meta name="description" content="Pisarka emocji. Kryminologia z ciekawości." />
+
+  <!-- Fonty (bez kombinowania) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      --text: #f5f5f5;
-      --muted: rgba(255,255,255,.72);
-      --card: rgba(255,255,255,.12);
-      --card-strong: rgba(255,255,255,.16);
-      --stroke: rgba(255,255,255,.14);
-      --shadow: 0 20px 70px rgba(0,0,0,.45);
-      --radius: 22px;
-      --max: 980px;
+      --card: rgba(245,245,245,0.96);
+      --text: #1f1f1f;
+      --muted: #4a4a4a;
+      --line: rgba(0,0,0,0.12);
+      --shadow: 0 10px 28px rgba(0,0,0,0.18);
+      --radius: 18px;
     }
 
-    *{ box-sizing:border-box; }
-    html,body{ height:100%; }
+    *{ box-sizing: border-box; }
+    html, body{ height:100%; }
     body{
       margin:0;
-      color:var(--text);
-      font-family: ui-serif, Georgia, "Times New Roman", serif;
-      background:#0f0f10;
-      overflow-x:hidden;
-    }
+      color: var(--text);
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 
-    /* TŁO: zdjęcie + przyciemnienie */
-    body::before{
-      content:"";
-      position:fixed;
-      inset:0;
+      /* TŁO: podmień na swój plik, jeśli masz inny */
       background:
-        linear-gradient(180deg, rgba(0,0,0,.72) 0%, rgba(0,0,0,.62) 35%, rgba(0,0,0,.78) 100%),
-        url("file_000000001f04720c8a514e8f7c6decad.png");
-      background-size:cover;
-      background-position:center;
-      filter:saturate(0.9) contrast(1.05);
-      transform:scale(1.03);
-      z-index:-2;
-    }
-
-    /* delikatne ziarno */
-    body::after{
-      content:"";
-      position:fixed;
-      inset:0;
-      background-image: radial-gradient(rgba(255,255,255,.06) 1px, transparent 1px);
-      background-size: 3px 3px;
-      opacity:.08;
-      z-index:-1;
-      pointer-events:none;
+        linear-gradient(180deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.45) 100%),
+        url("tlo.jpg");
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
     }
 
     .wrap{
-      width:min(var(--max), 92vw);
-      margin: 24px auto 70px;
+      width: min(980px, 92vw);
+      margin: 18px auto 42px;
     }
 
-    /* Pasek górny */
+    /* GÓRA */
     .topbar{
       display:flex;
       align-items:center;
       gap:14px;
-      padding:10px 0 14px;
+      padding: 6px 2px 14px;
+      color: rgba(255,255,255,0.92);
+      text-shadow: 0 2px 10px rgba(0,0,0,0.35);
     }
-
-    .logoTap{
-      width:46px;
-      height:46px;
-      border-radius:50%;
-      background: rgba(255,255,255,.86);
-      display:grid;
-      place-items:center;
-      box-shadow: 0 12px 30px rgba(0,0,0,.35);
-      border: 1px solid rgba(255,255,255,.35);
+    .brandmark{
+      width: 54px;
+      height: 54px;
+      border-radius: 999px;
       overflow:hidden;
-      flex:0 0 auto;
-      cursor:pointer;
-      user-select:none;
+      background: rgba(255,255,255,0.88);
+      box-shadow: 0 10px 26px rgba(0,0,0,0.28);
+      border: 1px solid rgba(255,255,255,0.25);
+      flex: 0 0 auto;
+      cursor: pointer;
+      user-select: none;
       -webkit-tap-highlight-color: transparent;
     }
-    .logoTap img{
-      width:86%;
-      height:86%;
-      object-fit:contain;
-      filter: contrast(1.1);
+    .brandmark img{
+      width:100%;
+      height:100%;
+      object-fit: cover;
+      display:block;
     }
-
-    .brand{
-      line-height:1.05;
+    .brandtext{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
     }
-    .brand .name{
-      font-size: 20px;
-      letter-spacing:.2px;
-      margin:0;
-      font-weight:700;
+    .brandtext .name{
+      font-family: "Playfair Display", serif;
+      font-weight: 700;
+      font-size: 26px;
+      line-height: 1.1;
     }
-    .brand .tag{
-      margin:4px 0 0;
+    .brandtext .tag{
       font-size: 14px;
-      color: var(--muted);
-      font-weight: 400;
-      letter-spacing:.15px;
+      opacity: 0.92;
     }
 
-    /* HERO */
-    .hero{
-      margin-top: 6px;
+    /* KARTA */
+    .card{
+      background: var(--card);
       border-radius: var(--radius);
-      background: rgba(255,255,255,.10);
-      border: 1px solid rgba(255,255,255,.14);
       box-shadow: var(--shadow);
-      overflow:hidden;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.35);
     }
-
-    .heroInner{
-      padding: 28px 18px 24px;
-      text-align:center;
-    }
+    .card-pad{ padding: 18px 18px; }
+    .card + .card{ margin-top: 14px; }
 
     .heroTitle{
-      margin:0;
-      font-size: 34px;
+      font-family: "Playfair Display", serif;
       font-weight: 700;
-      letter-spacing:.3px;
+      font-size: 42px;
+      letter-spacing: 0.2px;
+      margin: 6px 0 6px;
     }
     .heroSub{
-      margin: 10px auto 0;
-      max-width: 620px;
       font-size: 16px;
-      line-height: 1.45;
-      color: rgba(255,255,255,.80);
-    }
-
-    /* SEKCJE */
-    .grid{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap: 14px;
-      margin-top: 16px;
-    }
-
-    .card{
-      border-radius: var(--radius);
-      background: var(--card);
-      border: 1px solid var(--stroke);
-      box-shadow: 0 18px 55px rgba(0,0,0,.35);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      overflow:hidden;
-    }
-
-    .cardPad{
-      padding: 18px 18px 16px;
-    }
-
-    h2{
-      margin:0 0 10px;
-      font-size: 24px;
-      letter-spacing:.2px;
-    }
-
-    .muted{
-      color: rgba(255,255,255,.78);
-      font-size: 15px;
-      line-height: 1.55;
+      color: var(--muted);
       margin: 0;
     }
 
-    /* LISTA TEKSTÓW */
-    .postsHead{
-      display:flex;
-      align-items:baseline;
-      justify-content:space-between;
-      gap:12px;
-      margin-bottom: 8px;
+    h2{
+      font-family: "Playfair Display", serif;
+      font-weight: 700;
+      font-size: 34px;
+      margin: 0 0 10px;
+    }
+    p{ line-height: 1.6; margin: 0 0 10px; color: var(--text); }
+    .muted{ color: var(--muted); }
+
+    .divider{
+      height:1px;
+      background: var(--line);
+      margin: 14px 0;
     }
 
-    .postsHint{
-      font-size: 13px;
-      color: rgba(255,255,255,.66);
-      margin:0;
+    /* TEKSTY */
+    .textsHeader{
+      display:flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+    .textsHeader .small{
+      color: var(--muted);
+      font-size: 14px;
+      white-space: nowrap;
     }
 
     .post{
       padding: 14px 0;
-      border-top: 1px solid rgba(255,255,255,.12);
+      border-top: 1px solid var(--line);
     }
-    .post:first-of-type{ border-top: none; padding-top: 8px; }
-
-    .postMeta{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-      margin-bottom: 6px;
-    }
-
+    .post:first-of-type{ border-top: 0; padding-top: 8px; }
     .badge{
-      font-size: 12px;
-      padding: 5px 9px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.14);
-      border: 1px solid rgba(255,255,255,.16);
-      color: rgba(255,255,255,.84);
-    }
-    .date{
-      font-size: 12px;
-      color: rgba(255,255,255,.60);
-    }
-
-    .postTitle{
-      margin:0 0 8px;
-      font-size: 18px;
-      font-weight: 700;
-      letter-spacing:.2px;
-    }
-
-    .excerpt{
-      margin:0 0 10px;
-      font-size: 15px;
-      line-height: 1.55;
-      color: rgba(255,255,255,.78);
-    }
-
-    .btnRow{
-      display:flex;
-      justify-content:flex-start;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-
-    a.btn{
       display:inline-block;
-      text-decoration:none;
-      color: rgba(255,255,255,.92);
-      background: rgba(255,255,255,.16);
-      border: 1px solid rgba(255,255,255,.18);
-      padding: 9px 12px;
+      padding: 6px 12px;
       border-radius: 999px;
-      font-size: 13px;
-      letter-spacing:.2px;
-      transition: transform .12s ease, background .12s ease;
-    }
-    a.btn:active{ transform: scale(.98); }
-    a.btn:hover{ background: rgba(255,255,255,.20); }
-
-    .footer{
-      margin-top: 14px;
-      text-align:center;
-      color: rgba(255,255,255,.55);
+      border: 1px solid rgba(0,0,0,0.12);
+      background: rgba(255,255,255,0.55);
       font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+      margin-bottom: 8px;
+      color: #2d2d2d;
+    }
+    .postTitle{
+      font-family: "Playfair Display", serif;
+      font-weight: 700;
+      font-size: 28px;
+      margin: 0 0 6px;
+    }
+    .excerpt{
+      color: var(--muted);
+      margin: 0 0 10px;
     }
 
-    /* trochę większy oddech na większych ekranach */
-    @media (min-width: 720px){
-      .heroInner{ padding: 34px 26px 28px; }
-      .heroTitle{ font-size: 40px; }
-      .heroSub{ font-size: 16px; }
-      .cardPad{ padding: 20px 22px 18px; }
+    .readmore{
+      display:inline-block;
+      color: #1f1f1f;
+      font-weight: 600;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      cursor: pointer;
+    }
+
+    /* STOPKA */
+    .footer{
+      text-align:center;
+      color: rgba(255,255,255,0.8);
+      font-size: 12px;
+      margin-top: 18px;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.35);
+    }
+
+    /* RESPONSYWNOŚĆ */
+    @media (max-width: 520px){
+      .heroTitle{ font-size: 34px; }
+      h2{ font-size: 30px; }
+      .postTitle{ font-size: 24px; }
+      .brandtext .name{ font-size: 22px; }
     }
   </style>
 </head>
@@ -270,137 +197,165 @@
 <body>
   <div class="wrap">
 
+    <!-- TOP -->
     <header class="topbar">
-      <!-- 4 kliknięcia w logo -> /admin/ -->
-      <div class="logoTap" id="logoTap" aria-label="Logo">
-        <img src="file_000000006408722fa2ddd16807e0f8b7.png" alt="Logo" />
+      <!-- Logo: 4 szybkie tapnięcia -> /admin/ -->
+      <div class="brandmark" id="brandmark" title=" ">
+        <!-- Podmień src na swoje logo -->
+        <img src="file_000000001f04720c8a514e8f7c6decad.png" alt="Logo">
       </div>
-
-      <div class="brand">
-        <p class="name">P. A. Barczewska</p>
-        <p class="tag">Pisarka emocji. Kryminologia z ciekawości.</p>
+      <div class="brandtext">
+        <div class="name">P. A. Barczewska</div>
+        <div class="tag">Pisarka emocji. Kryminologia z ciekawości.</div>
       </div>
     </header>
 
-    <section class="hero">
-      <div class="heroInner">
-        <h1 class="heroTitle">P. A. Barczewska</h1>
-        <p class="heroSub">Piszę o emocjach, relacjach i o tym, co dzieje się z człowiekiem w momentach granicznych.</p>
+    <!-- HERO -->
+    <section class="card card-pad">
+      <div class="heroTitle">P. A. Barczewska</div>
+      <p class="heroSub">Pisarka emocji. Kryminologia z ciekawości.</p>
+    </section>
+
+    <!-- O MNIE -->
+    <section class="card card-pad">
+      <h2>O mnie</h2>
+      <p>
+        Piszę o emocjach, relacjach i o tym, co dzieje się z człowiekiem w momentach granicznych.
+        Interesuje mnie to, co niewypowiedziane — napięcia, decyzje podejmowane w ciszy, drobne pęknięcia,
+        które zmieniają bieg historii.
+      </p>
+      <p class="muted">
+        Nie udzielam porad ani diagnoz. Pokazuję warsztat, sposób patrzenia i pytania, które sobie stawiam —
+        zarówno w literaturze, jak i w refleksji nad rzeczywistością.
+      </p>
+
+      <div class="divider"></div>
+
+      <p><strong>Kryminał / psychologia</strong><br>
+        Najbliższy jest mi kryminał oparty na emocjach i perspektywie człowieka, nie na samej zbrodni.
+        Interesują mnie motywacje, relacje władzy, mechanizmy przemocy i to, jak łatwo granice się przesuwają.
+      </p>
+
+      <p><strong>Romans</strong><br>
+        Romans traktuję jako przestrzeń do opowiadania o bliskości, zależnościach i potrzebie bycia widzianym.
+        To historie o napięciu emocjonalnym, wyborach i konsekwencjach, które nie zawsze są oczywiste ani wygodne.
+      </p>
+
+      <p><strong>Horror</strong><br>
+        Horror pojawia się tam, gdzie strach nie jest krzykiem, lecz ciszą. Bardziej interesuje mnie niepokój niż
+        dosłowność — moment, w którym coś zaczyna się wymykać, a czytelnik czuje, że nie wszystko zostało nazwane.
+      </p>
+
+      <p class="muted" style="font-style: italic; margin-top: 10px;">
+        Publikuję swoje teksty i jednocześnie pracuję nad kolejnymi projektami. Niektóre historie są zamknięte,
+        inne wciąż się piszą — bo proces twórczy jest dla mnie równie ważny jak efekt końcowy.
+      </p>
+    </section>
+
+    <!-- TEKSTY -->
+    <section class="card card-pad">
+      <div class="textsHeader">
+        <h2 style="margin:0;">Teksty</h2>
+        <div class="small" id="countInfo">Pokazuję 5 najnowszych.</div>
       </div>
+
+      <div id="posts"></div>
     </section>
 
-    <section class="grid">
-      <article class="card">
-        <div class="cardPad">
-          <div class="postsHead">
-            <h2>Teksty</h2>
-            <p class="postsHint">Pokazuję 5 najnowszych.</p>
-          </div>
-
-          <div id="posts"></div>
-
-          <p class="footer" id="postsStatus"></p>
-        </div>
-      </article>
-    </section>
-
+    <div class="footer">© <span id="year"></span></div>
   </div>
 
   <script>
-    // === 4 kliknięcia -> /admin/ ===
+    // Rok w stopce
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    // 4 tapy w logo -> /admin/
     (function(){
-      const el = document.getElementById("logoTap");
+      const el = document.getElementById("brandmark");
       let taps = 0;
-      let timer = null;
+      let t = null;
 
       el.addEventListener("click", () => {
         taps++;
-        clearTimeout(timer);
-        timer = setTimeout(() => taps = 0, 900);
-
-        if(taps >= 4){
+        clearTimeout(t);
+        t = setTimeout(() => taps = 0, 700);
+        if (taps >= 4) {
           taps = 0;
           window.location.href = "/admin/";
         }
       });
     })();
 
-    // === Render 5 postów z posts.json ===
-    (async function(){
-      const box = document.getElementById("posts");
-      const status = document.getElementById("postsStatus");
+    // Pomocnicze: ucinanie tekstu
+    function cutText(str, max){
+      if (!str) return "";
+      const s = String(str).replace(/\s+/g, " ").trim();
+      if (s.length <= max) return s;
+      return s.slice(0, max).trimEnd() + "…";
+    }
 
-      function escapeHtml(s){
-        return String(s ?? "")
-          .replaceAll("&","&amp;")
-          .replaceAll("<","&lt;")
-          .replaceAll(">","&gt;")
-          .replaceAll('"',"&quot;")
-          .replaceAll("'","&#039;");
-      }
+    // Render listy tekstów z posts.json
+    async function loadPosts(){
+      const holder = document.getElementById("posts");
+      holder.innerHTML = "<p class='muted'>Ładuję…</p>";
 
-      function normalizeDate(d){
-        // d może być: "2026-02-01" albo "2026-02-01T10:00:00"
-        const t = Date.parse(d);
-        return Number.isFinite(t) ? t : 0;
-      }
-
-      try{
-        status.textContent = "Ładuję…";
-
-        // cache-bust, żeby telefon nie trzymał starego
-        const res = await fetch("posts.json?v=" + Date.now(), { cache: "no-store" });
-        if(!res.ok) throw new Error("Nie mogę pobrać posts.json");
-
+      try {
+        const res = await fetch("posts.json", { cache: "no-store" });
+        if (!res.ok) throw new Error("Brak posts.json");
         const data = await res.json();
-        const posts = Array.isArray(data) ? data : (Array.isArray(data.posts) ? data.posts : []);
 
-        if(!posts.length){
-          box.innerHTML = `<p class="muted">Na razie brak tekstów.</p>`;
-          status.textContent = "";
+        // Zakładamy: data to tablica obiektów
+        // { id, slug, title, excerpt, category, date }
+        const list = Array.isArray(data) ? data.slice() : [];
+
+        // Sort: najnowsze na górze (po date), jak nie ma date to zostaje kolejność
+        list.sort((a,b) => {
+          const da = a?.date ? Date.parse(a.date) : 0;
+          const db = b?.date ? Date.parse(b.date) : 0;
+          return db - da;
+        });
+
+        const latest = list.slice(0, 5);
+
+        if (!latest.length){
+          holder.innerHTML = "<p class='muted'>Na razie brak opublikowanych tekstów.</p>";
           return;
         }
 
-        // Sort: jeśli mają datę -> od najnowszych, inaczej zostawiam kolejność
-        const hasDates = posts.some(p => p && p.date);
-        const sorted = hasDates
-          ? [...posts].sort((a,b) => normalizeDate(b.date) - normalizeDate(a.date))
-          : [...posts];
+        holder.innerHTML = latest.map(p => {
+          const title = p?.title || "Bez tytułu";
+          const cat = p?.category || "Tekst";
+          const excerpt = p?.excerpt
+            ? cutText(p.excerpt, 140)
+            : cutText(p?.content || "", 140) || " ";
 
-        const top5 = sorted.slice(0, 5);
-
-        box.innerHTML = top5.map(p => {
-          const id = escapeHtml(p.id || "");
-          const title = escapeHtml(p.title || "Bez tytułu");
-          const excerpt = escapeHtml(p.excerpt || p.fragment || "");
-          const category = escapeHtml(p.category || "Tekst");
-          const date = p.date ? escapeHtml(p.date) : "";
-
-          const dateHtml = date ? `<span class="date">${date}</span>` : "";
+          // Link do pełnego tekstu:
+          // - jeśli masz post.html w root: używamy post.html?slug=...
+          // - jeśli nie ma slug, użyj id
+          const key = p?.slug ? "slug=" + encodeURIComponent(p.slug) :
+                      (p?.id ? "id=" + encodeURIComponent(p.id) : "");
+          const href = key ? ("post.html?" + key) : "post.html";
 
           return `
-            <div class="post">
-              <div class="postMeta">
-                <span class="badge">${category}</span>
-                ${dateHtml}
-              </div>
-
-              <h3 class="postTitle">${title}</h3>
+            <article class="post">
+              <div class="badge">${cat}</div>
+              <div class="postTitle">${title}</div>
               <p class="excerpt">${excerpt}</p>
-
-              <div class="btnRow">
-                <a class="btn" href="post.html?id=${encodeURIComponent(id)}">Czytaj dalej</a>
-              </div>
-            </div>
+              <a class="readmore" href="${href}">Czytaj dalej</a>
+            </article>
           `;
         }).join("");
 
-        status.textContent = "";
-      } catch(err){
-        box.innerHTML = `<p class="muted">Nie mogę wczytać listy tekstów. Sprawdź, czy plik <strong>posts.json</strong> jest w głównym katalogu.</p>`;
-        status.textContent = "";
+        // Info po prawej
+        const info = document.getElementById("countInfo");
+        info.textContent = `Pokazuję ${Math.min(5, list.length)} najnowszych.`;
+      } catch (e) {
+        holder.innerHTML =
+          "<p class='muted'>Nie mogę wczytać listy tekstów. Sprawdź, czy istnieje plik <strong>posts.json</strong> w głównym katalogu.</p>";
       }
-    })();
+    }
+
+    loadPosts();
   </script>
 </body>
 </html>
