@@ -10,33 +10,31 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 <style>
-:root{ --radius: 18px; --shadow: 0 18px 60px rgba(0,0,0,0.25); }
+:root{ --radius: 35px; --shadow: 0 10px 40px rgba(0,0,0,0.2); }
 *{ box-sizing:border-box; }
 body{ margin:0; font-family:"Inter", sans-serif; color:#151515; background-image:url("file_000000006408722fa2ddd16807e0f8b7.png"); background-size:cover; background-position:center; background-attachment:fixed; min-height:100vh; }
-body::before{ content:""; position:fixed; inset:0; background:rgba(10,10,12,0.45); z-index:-1; }
+body::before{ content:""; position:fixed; inset:0; background:rgba(0,0,0,0.3); z-index:-1; }
+
 header{ max-width:980px; margin:24px auto 0; padding:0 18px; display:flex; align-items:center; gap:14px; color:#fff; }
-.logo{ width:64px; height:64px; border-radius:50%; background:#fff; object-fit:cover; box-shadow:0 10px 30px rgba(0,0,0,0.3); flex:0 0 auto; cursor:pointer; -webkit-tap-highlight-color: transparent; }
-header h1{ font-family:"Playfair Display", serif; font-size:1.5rem; margin:0; line-height:1.1; }
-header p{ margin:4px 0 0; font-size:0.95rem; opacity:0.9; }
-.hero{ max-width:980px; margin:18px auto 0; padding:84px 18px 64px; border-radius:var(--radius); box-shadow:var(--shadow); background:rgba(255,255,255,0.10); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); border:1px solid rgba(255,255,255,0.12); text-align:center; }
-.hero h2{ font-family:"Playfair Display", serif; font-size:2.35rem; color:#fff; margin:0 0 10px; }
-.hero p{ color:rgba(255,255,255,0.92); font-size:1.05rem; margin:0; font-weight:300; }
-main{ max-width:980px; margin:30px auto 70px; padding:0 18px; }
-section{ background:rgba(255,255,255,0.64); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); border:1px solid rgba(255,255,255,0.25); border-radius:var(--radius); box-shadow:var(--shadow); padding:26px 22px; margin-top:20px; }
-section h2{ font-family:"Playfair Display", serif; font-size:1.5rem; margin:0 0 14px; }
-.post-preview{ margin-top:22px; padding-top:18px; border-top:1px solid rgba(0,0,0,0.15); }
-.post-preview h3{ font-family:"Playfair Display", serif; font-size:1.2rem; margin:0 0 6px; }
-.post-preview .excerpt{ font-size:0.95rem; line-height:1.6; opacity:0.9; margin:0 0 10px; }
-.read-more{ display:inline-block; font-size:0.9rem; text-decoration:none; color:#111; font-weight:500; border-bottom:1px solid rgba(0,0,0,0.4); padding-bottom:2px; }
+.logo{ width:64px; height:64px; border-radius:50%; background:#fff; object-fit:cover; box-shadow:0 10px 30px rgba(0,0,0,0.3); flex:0 0 auto; cursor:pointer; }
+header h1{ font-family:"Playfair Display", serif; font-size:1.5rem; margin:0; }
 
-/* SOCIAL MEDIA STYLE */
-.social-links { display: flex; justify-content: center; gap: 12px; margin: 25px 0 15px; flex-wrap: wrap; }
-.social-link { display: flex; align-items: center; gap: 8px; color: #fff; text-decoration: none; font-size: 0.8rem; background: rgba(255,255,255,0.12); padding: 10px 16px; border-radius: 25px; backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.15); transition: all 0.3s ease; }
-.social-link:hover { background: rgba(255,255,255,0.25); transform: translateY(-3px); border-color: rgba(255,255,255,0.4); }
-.social-link i { font-size: 1rem; }
+.hero{ max-width:980px; margin:20px auto; padding:60px 20px; border-radius:var(--radius); background:rgba(255,255,255,0.15); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border:1px solid rgba(255,255,255,0.2); text-align:center; color:#fff; box-shadow: var(--shadow); }
+.hero h2{ font-family:"Playfair Display", serif; font-size:2.5rem; margin:0; }
 
-footer{ max-width:980px; margin:26px auto 60px; padding:0 18px; color:rgba(255,255,255,0.80); font-size:0.9rem; text-align:center; }
-@media (max-width:520px){ .hero h2{ font-size:2rem; } section{ padding:22px 18px; } header h1{ font-size:1.35rem; } }
+main{ max-width:980px; margin:0 auto; padding:0 18px; }
+section{ background:rgba(255,255,255,0.75); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius:var(--radius); box-shadow:var(--shadow); padding:35px 30px; margin-bottom:25px; border: 1px solid rgba(255,255,255,0.3); }
+section h2{ font-family:"Playfair Display", serif; font-size:1.8rem; margin:0 0 15px; }
+
+.post-preview{ margin-top:20px; padding-top:20px; border-top:1px solid rgba(0,0,0,0.1); }
+.read-more{ display:inline-block; margin-top:10px; text-decoration:none; color:#111; font-weight:600; border-bottom:1px solid #111; padding-bottom:2px; }
+
+.social-links { display: flex; justify-content: center; gap: 12px; margin: 30px 0 10px; flex-wrap: wrap; }
+.social-link { display: flex; align-items: center; gap: 8px; color: #fff; text-decoration: none; font-size: 0.85rem; background: rgba(255,255,255,0.15); padding: 12px 18px; border-radius: 30px; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.2); transition: 0.3s; }
+.social-link:hover { background: rgba(255,255,255,0.3); transform: translateY(-3px); }
+
+footer{ color:rgba(255,255,255,0.8); font-size:0.9rem; text-align:center; padding-bottom:50px; }
+@media (max-width:520px){ :root{ --radius: 28px; } .hero h2{ font-size:2.1rem; } section{ padding:25px 20px; } }
 </style>
 </head>
 <body>
@@ -57,43 +55,31 @@ footer{ max-width:980px; margin:26px auto 60px; padding:0 18px; color:rgba(255,2
 <main>
   <section>
     <h2>O mnie</h2>
-    <p>Piszę o emocjach, relacjach i o tym, co dzieje się z człowiekiem w momentach granicznych.</p>
-    <p>Kryminologia jest dla mnie narzędziem myślenia. Nie oceniam — pokazuję warsztat i sposób patrzenia.</p>
+    <p>Piszę o emocjach, relacjach i o tym, co dzieje się z człowiekiem w momentach granicznych. Kryminologia jest dla mnie narzędziem myślenia.</p>
   </section>
 
   <section>
     <h2>Teksty</h2>
-    
     <article class="post-preview">
       <h3>Najlepsze rzeczy dzieją się w ciszy</h3>
-      <p class="excerpt">Czasem nie potrzeba odpowiedzi. Wystarczy zostać na chwilę w miejscu, w którym coś zaczyna być prawdziwe…</p>
+      <p>Czasem nie potrzeba odpowiedzi. Wystarczy zostać na chwilę w miejscu, w którym coś zaczyna być prawdziwe…</p>
       <a class="read-more" href="teksty/najlepsze-rzeczy.html">Czytaj dalej</a>
     </article>
-
     <article class="post-preview">
       <h3>Między strachem a decyzją</h3>
-      <p class="excerpt">Każda decyzja ma swój moment graniczny. Ten, w którym ciało wie wcześniej niż my…</p>
+      <p>Każda decyzja ma swój moment graniczny. Ten, w którym ciało wie wcześniej niż my…</p>
       <a class="read-more" href="teksty/miedzy-strachem.html">Czytaj dalej</a>
     </article>
-
     <div id="dynamic-posts"></div>
   </section>
 </main>
 
 <footer>
   <div class="social-links">
-    <a href="mailto:p.a.barczewska@gmail.com" class="social-link">
-      <i class="fas fa-envelope"></i> Email
-    </a>
-    <a href="https://www.instagram.com/p.a.barczewska" target="_blank" class="social-link">
-      <i class="fab fa-instagram"></i> Instagram
-    </a>
-    <a href="https://www.tiktok.com/@p.a.barczewska" target="_blank" class="social-link">
-      <i class="fab fa-tiktok"></i> TikTok
-    </a>
-    <a href="https://www.wattpad.com/user/pabarczewska" target="_blank" class="social-link">
-      <i class="fas fa-pen-nib"></i> Wattpad
-    </a>
+    <a href="mailto:p.a.barczewska@gmail.com" class="social-link"><i class="fas fa-envelope"></i> Email</a>
+    <a href="https://www.instagram.com/p.a.barczewska" target="_blank" class="social-link"><i class="fab fa-instagram"></i> Instagram</a>
+    <a href="https://www.tiktok.com/@p.a.barczewska" target="_blank" class="social-link"><i class="fab fa-tiktok"></i> TikTok</a>
+    <a href="https://www.wattpad.com/user/pabarczewska" target="_blank" class="social-link"><i class="fas fa-pen-nib"></i> Wattpad</a>
   </div>
   <p>© <span id="year"></span> P. A. Barczewska</p>
 </footer>
@@ -101,13 +87,11 @@ footer{ max-width:980px; margin:26px auto 60px; padding:0 18px; color:rgba(255,2
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
   document.getElementById("year").textContent = new Date().getFullYear();
-
   async function loadDynamicPosts() {
     const container = document.getElementById('dynamic-posts');
     try {
       const response = await fetch(`https://api.github.com/repos/pbarczewska/pbarczewska.github.io/contents/teksty`);
       const files = await response.json();
-      if (!files || files.length === 0 || files.message === "Not Found") return;
       for (const file of files) {
         if (file.name.endsWith('.md')) {
           const res = await fetch(file.download_url);
@@ -117,11 +101,11 @@ footer{ max-width:980px; margin:26px auto 60px; padding:0 18px; color:rgba(255,2
           const bodyContent = content.split('---').pop().trim();
           const article = document.createElement('article');
           article.className = 'post-preview';
-          article.innerHTML = `<h3>${title}</h3><div class="excerpt">${marked.parse(bodyContent.substring(0, 150))}...</div><a class="read-more" href="view.html?post=${file.name}">Czytaj dalej</a>`;
+          article.innerHTML = `<h3>${title}</h3><p>${marked.parse(bodyContent.substring(0, 150))}...</p><a class="read-more" href="view.html?post=${file.name}">Czytaj dalej</a>`;
           container.appendChild(article);
         }
       }
-    } catch (e) { console.error(e); }
+    } catch (e) {}
   }
   loadDynamicPosts();
 
