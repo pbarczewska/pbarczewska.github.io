@@ -8,8 +8,7 @@ public_folder: "/assets/images"
 collections:
   - name: "posty"
     label: "Moje Teksty"
-    label_singular: "Tekst"
-    file: "posts.json" # Tu CMS będzie wpisywał dane
+    file: "posts.json"
     extension: "json"
     format: "json"
     fields:
@@ -17,7 +16,7 @@ collections:
         name: "posts"
         widget: "list"
         fields:
-          - {label: "Unikalne ID (bez spacji)", name: "id", widget: "string"}
+          - {label: "ID (np. tekst-1)", name: "id", widget: "string"}
           - {label: "Tytuł", name: "title", widget: "string"}
           - {label: "Kategoria", name: "category", widget: "select", options: ["Kryminał", "Romans", "Horror"]}
           - {label: "Krótki opis", name: "excerpt", widget: "text"}
