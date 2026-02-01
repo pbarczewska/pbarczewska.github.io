@@ -1,357 +1,406 @@
 <!doctype html>
 <html lang="pl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>P. A. Barczewska</title>
 
-<title>P. A. Barczewska</title>
+  <style>
+    :root{
+      --text: #f5f5f5;
+      --muted: rgba(255,255,255,.72);
+      --card: rgba(255,255,255,.12);
+      --card-strong: rgba(255,255,255,.16);
+      --stroke: rgba(255,255,255,.14);
+      --shadow: 0 20px 70px rgba(0,0,0,.45);
+      --radius: 22px;
+      --max: 980px;
+    }
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      color:var(--text);
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      background:#0f0f10;
+      overflow-x:hidden;
+    }
 
-<style>
-:root{
-  --radius: 18px;
-  --shadow: 0 18px 60px rgba(0,0,0,0.25);
-}
+    /* TŁO: zdjęcie + przyciemnienie */
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,.72) 0%, rgba(0,0,0,.62) 35%, rgba(0,0,0,.78) 100%),
+        url("file_000000001f04720c8a514e8f7c6decad.png");
+      background-size:cover;
+      background-position:center;
+      filter:saturate(0.9) contrast(1.05);
+      transform:scale(1.03);
+      z-index:-2;
+    }
 
-*{ box-sizing:border-box; }
+    /* delikatne ziarno */
+    body::after{
+      content:"";
+      position:fixed;
+      inset:0;
+      background-image: radial-gradient(rgba(255,255,255,.06) 1px, transparent 1px);
+      background-size: 3px 3px;
+      opacity:.08;
+      z-index:-1;
+      pointer-events:none;
+    }
 
-body{
-  margin:0;
-  font-family:"Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  color:#151515;
+    .wrap{
+      width:min(var(--max), 92vw);
+      margin: 24px auto 70px;
+    }
 
-  background-image:url("file_000000006408722fa2ddd16807e0f8b7.png");
-  background-size:cover;
-  background-position:center;
-  background-attachment:fixed;
-  min-height:100vh;
-}
+    /* Pasek górny */
+    .topbar{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      padding:10px 0 14px;
+    }
 
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  background:rgba(10,10,12,0.45);
-  z-index:-1;
-}
+    .logoTap{
+      width:46px;
+      height:46px;
+      border-radius:50%;
+      background: rgba(255,255,255,.86);
+      display:grid;
+      place-items:center;
+      box-shadow: 0 12px 30px rgba(0,0,0,.35);
+      border: 1px solid rgba(255,255,255,.35);
+      overflow:hidden;
+      flex:0 0 auto;
+      cursor:pointer;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .logoTap img{
+      width:86%;
+      height:86%;
+      object-fit:contain;
+      filter: contrast(1.1);
+    }
 
-/* HEADER */
-header{
-  max-width:980px;
-  margin:24px auto 0;
-  padding:0 18px;
-  display:flex;
-  align-items:center;
-  gap:14px;
-  color:#fff;
-}
+    .brand{
+      line-height:1.05;
+    }
+    .brand .name{
+      font-size: 20px;
+      letter-spacing:.2px;
+      margin:0;
+      font-weight:700;
+    }
+    .brand .tag{
+      margin:4px 0 0;
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 400;
+      letter-spacing:.15px;
+    }
 
-.logo{
-  width:64px;
-  height:64px;
-  border-radius:50%;
-  background:#fff;
-  object-fit:cover;
-  box-shadow:0 10px 30px rgba(0,0,0,0.3);
-  flex:0 0 auto;
-  cursor:pointer;
-  -webkit-tap-highlight-color: transparent;
-}
+    /* HERO */
+    .hero{
+      margin-top: 6px;
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.14);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
 
-header h1{
-  font-family:"Playfair Display", serif;
-  font-size:1.5rem;
-  margin:0;
-  line-height:1.1;
-}
+    .heroInner{
+      padding: 28px 18px 24px;
+      text-align:center;
+    }
 
-header p{
-  margin:4px 0 0;
-  font-size:0.95rem;
-  opacity:0.9;
-}
+    .heroTitle{
+      margin:0;
+      font-size: 34px;
+      font-weight: 700;
+      letter-spacing:.3px;
+    }
+    .heroSub{
+      margin: 10px auto 0;
+      max-width: 620px;
+      font-size: 16px;
+      line-height: 1.45;
+      color: rgba(255,255,255,.80);
+    }
 
-/* HERO */
-.hero{
-  max-width:980px;
-  margin:18px auto 0;
-  padding:84px 18px 64px;
-  border-radius:var(--radius);
-  box-shadow:var(--shadow);
-  background:rgba(255,255,255,0.10);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  border:1px solid rgba(255,255,255,0.12);
-  text-align:center;
-}
+    /* SEKCJE */
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-top: 16px;
+    }
 
-.hero h2{
-  font-family:"Playfair Display", serif;
-  font-size:2.35rem;
-  color:#fff;
-  margin:0 0 10px;
-}
+    .card{
+      border-radius: var(--radius);
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      box-shadow: 0 18px 55px rgba(0,0,0,.35);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      overflow:hidden;
+    }
 
-.hero p{
-  color:rgba(255,255,255,0.92);
-  font-size:1.05rem;
-  margin:0;
-  font-weight:300;
-}
+    .cardPad{
+      padding: 18px 18px 16px;
+    }
 
-/* MAIN + SECTIONS */
-main{
-  max-width:980px;
-  margin:30px auto 70px;
-  padding:0 18px;
-}
+    h2{
+      margin:0 0 10px;
+      font-size: 24px;
+      letter-spacing:.2px;
+    }
 
-section{
-  background:rgba(255,255,255,0.64);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  border:1px solid rgba(255,255,255,0.25);
+    .muted{
+      color: rgba(255,255,255,.78);
+      font-size: 15px;
+      line-height: 1.55;
+      margin: 0;
+    }
 
-  border-radius:var(--radius);
-  box-shadow:var(--shadow);
-  padding:26px 22px;
-  margin-top:20px;
-}
+    /* LISTA TEKSTÓW */
+    .postsHead{
+      display:flex;
+      align-items:baseline;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom: 8px;
+    }
 
-section h2{
-  font-family:"Playfair Display", serif;
-  font-size:1.5rem;
-  margin:0 0 14px;
-}
+    .postsHint{
+      font-size: 13px;
+      color: rgba(255,255,255,.66);
+      margin:0;
+    }
 
-section p{
-  font-size:0.97rem;
-  line-height:1.7;
-  margin:0 0 12px;
-}
+    .post{
+      padding: 14px 0;
+      border-top: 1px solid rgba(255,255,255,.12);
+    }
+    .post:first-of-type{ border-top: none; padding-top: 8px; }
 
-.work-block{
-  margin-top:18px;
-  padding-top:14px;
-  border-top:1px solid rgba(0,0,0,0.15);
-}
+    .postMeta{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin-bottom: 6px;
+    }
 
-.work-block h3{
-  font-family:"Playfair Display", serif;
-  font-size:1.15rem;
-  margin:0 0 8px;
-}
+    .badge{
+      font-size: 12px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.14);
+      border: 1px solid rgba(255,255,255,.16);
+      color: rgba(255,255,255,.84);
+    }
+    .date{
+      font-size: 12px;
+      color: rgba(255,255,255,.60);
+    }
 
-.work-status{
-  margin-top:18px;
-  font-style:italic;
-  opacity:0.75;
-}
+    .postTitle{
+      margin:0 0 8px;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing:.2px;
+    }
 
-/* LISTA TEKSTÓW */
-.post-preview{
-  margin-top:22px;
-  padding-top:18px;
-  border-top:1px solid rgba(0,0,0,0.15);
-}
+    .excerpt{
+      margin:0 0 10px;
+      font-size: 15px;
+      line-height: 1.55;
+      color: rgba(255,255,255,.78);
+    }
 
-.post-preview h3{
-  font-family:"Playfair Display", serif;
-  font-size:1.2rem;
-  margin:0 0 6px;
-}
+    .btnRow{
+      display:flex;
+      justify-content:flex-start;
+      gap:10px;
+      flex-wrap:wrap;
+    }
 
-.post-preview .excerpt{
-  font-size:0.95rem;
-  line-height:1.6;
-  opacity:0.9;
-  margin:0 0 10px;
-}
+    a.btn{
+      display:inline-block;
+      text-decoration:none;
+      color: rgba(255,255,255,.92);
+      background: rgba(255,255,255,.16);
+      border: 1px solid rgba(255,255,255,.18);
+      padding: 9px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      letter-spacing:.2px;
+      transition: transform .12s ease, background .12s ease;
+    }
+    a.btn:active{ transform: scale(.98); }
+    a.btn:hover{ background: rgba(255,255,255,.20); }
 
-.read-more{
-  display:inline-block;
-  font-size:0.9rem;
-  text-decoration:none;
-  color:#111;
-  font-weight:500;
-  border-bottom:1px solid rgba(0,0,0,0.4);
-  padding-bottom:2px;
-}
+    .footer{
+      margin-top: 14px;
+      text-align:center;
+      color: rgba(255,255,255,.55);
+      font-size: 12px;
+    }
 
-.read-more:hover{ opacity:0.7; }
-
-/* FOOTER */
-footer{
-  max-width:980px;
-  margin:26px auto 60px;
-  padding:0 18px;
-  color:rgba(255,255,255,0.80);
-  font-size:0.9rem;
-  text-align:center;
-}
-
-/* MOBILE */
-@media (max-width:520px){
-  .hero h2{ font-size:2rem; }
-  section{ padding:22px 18px; }
-  header h1{ font-size:1.35rem; }
-}
-</style>
+    /* trochę większy oddech na większych ekranach */
+    @media (min-width: 720px){
+      .heroInner{ padding: 34px 26px 28px; }
+      .heroTitle{ font-size: 40px; }
+      .heroSub{ font-size: 16px; }
+      .cardPad{ padding: 20px 22px 18px; }
+    }
+  </style>
 </head>
 
 <body>
+  <div class="wrap">
 
-<header>
-  <img id="secretLogo" class="logo" src="file_000000001f04720c8a514e8f7c6decad.png" alt="Logo P. A. Barczewska">
-  <div>
-    <h1>P. A. Barczewska</h1>
-    <p>Pisarka emocji. Kryminologia z ciekawości.</p>
+    <header class="topbar">
+      <!-- 4 kliknięcia w logo -> /admin/ -->
+      <div class="logoTap" id="logoTap" aria-label="Logo">
+        <img src="file_000000006408722fa2ddd16807e0f8b7.png" alt="Logo" />
+      </div>
+
+      <div class="brand">
+        <p class="name">P. A. Barczewska</p>
+        <p class="tag">Pisarka emocji. Kryminologia z ciekawości.</p>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="heroInner">
+        <h1 class="heroTitle">P. A. Barczewska</h1>
+        <p class="heroSub">Piszę o emocjach, relacjach i o tym, co dzieje się z człowiekiem w momentach granicznych.</p>
+      </div>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <div class="cardPad">
+          <div class="postsHead">
+            <h2>Teksty</h2>
+            <p class="postsHint">Pokazuję 5 najnowszych.</p>
+          </div>
+
+          <div id="posts"></div>
+
+          <p class="footer" id="postsStatus"></p>
+        </div>
+      </article>
+    </section>
+
   </div>
-</header>
 
-<div class="hero">
-  <h2>P. A. Barczewska</h2>
-  <p>Pisarka emocji. Kryminologia z ciekawości.</p>
-</div>
-
-<main>
-
-  <section>
-    <h2>O mnie</h2>
-
-    <p>
-      Piszę o emocjach, relacjach i o tym, co dzieje się z człowiekiem
-      w momentach granicznych. Interesuje mnie to, co niewypowiedziane —
-      napięcia, decyzje podejmowane w ciszy, drobne pęknięcia,
-      które zmieniają bieg historii.
-    </p>
-
-    <p>
-      Kryminologia jest dla mnie narzędziem myślenia. Ukończone studia
-      pozwoliły mi lepiej rozumieć mechanizmy przemocy, wiktymologii
-      oraz zachowań ludzkich, ale nie po to, by oceniać czy pouczać.
-      To zaplecze poznawcze, które porządkuje ciekawość
-      i pogłębia spojrzenie.
-    </p>
-
-    <p>
-      Nie udzielam porad ani diagnoz. Pokazuję warsztat, sposób patrzenia
-      i pytania, które sobie stawiam — zarówno w literaturze,
-      jak i w refleksji nad rzeczywistością.
-    </p>
-  </section>
-
-  <section>
-    <h2>Twórczość</h2>
-
-    <div class="work-block">
-      <h3>Kryminał / psychologia</h3>
-      <p>
-        Najbliższy jest mi kryminał oparty na emocjach i perspektywie
-        człowieka, nie na samej zbrodni. Interesują mnie motywacje,
-        relacje władzy, mechanizmy przemocy i to, jak łatwo granice
-        się przesuwają.
-      </p>
-    </div>
-
-    <div class="work-block">
-      <h3>Romans</h3>
-      <p>
-        Romans traktuję jako przestrzeń do opowiadania o bliskości,
-        zależnościach i potrzebie bycia widzianym. To historie
-        o napięciu emocjonalnym, wyborach i konsekwencjach,
-        które nie zawsze są oczywiste ani wygodne.
-      </p>
-    </div>
-
-    <div class="work-block">
-      <h3>Horror</h3>
-      <p>
-        Horror pojawia się tam, gdzie strach nie jest krzykiem,
-        lecz ciszą. Bardziej interesuje mnie niepokój niż dosłowność —
-        moment, w którym coś zaczyna się wymykać,
-        a czytelnik czuje, że nie wszystko zostało nazwane.
-      </p>
-    </div>
-
-    <p class="work-status">
-      Publikuję swoje teksty i jednocześnie pracuję nad kolejnymi projektami.
-      Niektóre historie są zamknięte, inne wciąż się piszą —
-      bo proces twórczy jest dla mnie równie ważny jak efekt końcowy.
-    </p>
-  </section>
-
-  <section>
-    <h2>Teksty</h2>
-
-    <!-- Wpis 1 -->
-    <article class="post-preview">
-      <h3>Najlepsze rzeczy dzieją się w ciszy</h3>
-      <p class="excerpt">
-        Czasem nie potrzeba odpowiedzi. Wystarczy zostać na chwilę
-        w miejscu, w którym coś zaczyna być prawdziwe…
-      </p>
-      <a class="read-more" href="teksty/najlepsze-rzeczy.html">Czytaj dalej</a>
-    </article>
-
-    <!-- Wpis 2 -->
-    <article class="post-preview">
-      <h3>Między strachem a decyzją</h3>
-      <p class="excerpt">
-        Każda decyzja ma swój moment graniczny.
-        Ten, w którym ciało wie wcześniej niż my…
-      </p>
-      <a class="read-more" href="teksty/miedzy-strachem.html">Czytaj dalej</a>
-    </article>
-
-  </section>
-
-</main>
-
-<footer>© <span id="year"></span> P. A. Barczewska</footer>
-
-<script>
-  // Rok w stopce
-  const y = document.getElementById("year");
-  if (y) y.textContent = new Date().getFullYear();
-
-  // 4 tapnięcia w logo -> /admin/
-  (function () {
-    function bind() {
-      const logo = document.getElementById("secretLogo");
-      if (!logo) return;
-
-      let clicks = 0;
+  <script>
+    // === 4 kliknięcia -> /admin/ ===
+    (function(){
+      const el = document.getElementById("logoTap");
+      let taps = 0;
       let timer = null;
 
-      function handler(e){
-        e.preventDefault();
-        e.stopPropagation();
-
-        clicks++;
+      el.addEventListener("click", () => {
+        taps++;
         clearTimeout(timer);
-        timer = setTimeout(() => { clicks = 0; }, 1500);
+        timer = setTimeout(() => taps = 0, 900);
 
-        if (clicks >= 4){
-          clicks = 0;
+        if(taps >= 4){
+          taps = 0;
           window.location.href = "/admin/";
         }
+      });
+    })();
+
+    // === Render 5 postów z posts.json ===
+    (async function(){
+      const box = document.getElementById("posts");
+      const status = document.getElementById("postsStatus");
+
+      function escapeHtml(s){
+        return String(s ?? "")
+          .replaceAll("&","&amp;")
+          .replaceAll("<","&lt;")
+          .replaceAll(">","&gt;")
+          .replaceAll('"',"&quot;")
+          .replaceAll("'","&#039;");
       }
 
-      logo.addEventListener("touchend", handler, { passive:false });
-      logo.addEventListener("click", handler);
-    }
+      function normalizeDate(d){
+        // d może być: "2026-02-01" albo "2026-02-01T10:00:00"
+        const t = Date.parse(d);
+        return Number.isFinite(t) ? t : 0;
+      }
 
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", bind);
-    } else {
-      bind();
-    }
-  })();
-</script>
+      try{
+        status.textContent = "Ładuję…";
 
+        // cache-bust, żeby telefon nie trzymał starego
+        const res = await fetch("posts.json?v=" + Date.now(), { cache: "no-store" });
+        if(!res.ok) throw new Error("Nie mogę pobrać posts.json");
+
+        const data = await res.json();
+        const posts = Array.isArray(data) ? data : (Array.isArray(data.posts) ? data.posts : []);
+
+        if(!posts.length){
+          box.innerHTML = `<p class="muted">Na razie brak tekstów.</p>`;
+          status.textContent = "";
+          return;
+        }
+
+        // Sort: jeśli mają datę -> od najnowszych, inaczej zostawiam kolejność
+        const hasDates = posts.some(p => p && p.date);
+        const sorted = hasDates
+          ? [...posts].sort((a,b) => normalizeDate(b.date) - normalizeDate(a.date))
+          : [...posts];
+
+        const top5 = sorted.slice(0, 5);
+
+        box.innerHTML = top5.map(p => {
+          const id = escapeHtml(p.id || "");
+          const title = escapeHtml(p.title || "Bez tytułu");
+          const excerpt = escapeHtml(p.excerpt || p.fragment || "");
+          const category = escapeHtml(p.category || "Tekst");
+          const date = p.date ? escapeHtml(p.date) : "";
+
+          const dateHtml = date ? `<span class="date">${date}</span>` : "";
+
+          return `
+            <div class="post">
+              <div class="postMeta">
+                <span class="badge">${category}</span>
+                ${dateHtml}
+              </div>
+
+              <h3 class="postTitle">${title}</h3>
+              <p class="excerpt">${excerpt}</p>
+
+              <div class="btnRow">
+                <a class="btn" href="post.html?id=${encodeURIComponent(id)}">Czytaj dalej</a>
+              </div>
+            </div>
+          `;
+        }).join("");
+
+        status.textContent = "";
+      } catch(err){
+        box.innerHTML = `<p class="muted">Nie mogę wczytać listy tekstów. Sprawdź, czy plik <strong>posts.json</strong> jest w głównym katalogu.</p>`;
+        status.textContent = "";
+      }
+    })();
+  </script>
 </body>
 </html>
