@@ -1,0 +1,15 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "assets/images"
+public_folder: "/assets/images"
+
+collections:
+  - name: "blog"
+    label: "Moje Teksty"
+    folder: "teksty"
+    create: true
+    fields:
+      - {label: "Tytuł", name: "title", widget: "string"}
+      - {label: "Treść", name: "body", widget: "markdown"}
