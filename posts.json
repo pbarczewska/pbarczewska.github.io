@@ -1,0 +1,9 @@
+[
+  {
+    "id": "pierwszy-tekst",
+    "title": "Pierwszy tekst (test)",
+    "category": "Romans",
+    "excerpt": "To jest krótki fragment widoczny na liście.",
+    "content": "To jest pełny tekst.\n\nMoże być bardzo długi.\n\nEntery działają."
+  }
+]
