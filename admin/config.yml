@@ -6,19 +6,13 @@ media_folder: "assets/images"
 public_folder: "/assets/images"
 
 collections:
-  - name: "konfiguracja"
+  - name: "blog"
     label: "Moje Teksty"
-    files:
-      - label: "Lista Postów"
-        name: "posts_list"
-        file: "posts.json"
-        fields:
-          - label: "Wszystkie Posty"
-            name: "posts"
-            widget: "list"
-            fields:
-              - {label: "ID (np. tekst-1)", name: "id", widget: "string"}
-              - {label: "Tytuł", name: "title", widget: "string"}
-              - {label: "Kategoria", name: "category", widget: "select", options: ["Kryminał", "Romans", "Horror"]}
-              - {label: "Krótki opis", name: "excerpt", widget: "text"}
-              - {label: "Pełna treść", name: "content", widget: "markdown"}
+    folder: "teksty"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - {label: "Tytuł", name: "title", widget: "string"}
+      - {label: "Data", name: "date", widget: "datetime"}
+      - {label: "Opis", name: "excerpt", widget: "text"}
+      - {label: "Treść", name: "body", widget: "markdown"}
