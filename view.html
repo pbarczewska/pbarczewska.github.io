@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Czytasz tekst - P. A. Barczewska</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  body {
+    margin: 0;
+    font-family: "Inter", sans-serif;
+    background: #f4f4f4;
+    color: #151515;
+    line-height: 1.8;
+  }
+  article {
+    max-width: 800px;
+    margin: 40px auto;
+    background: #fff;
+    padding: 40px;
+    border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  }
+  h1 { font-family: "Playfair Display", serif; font-size: 2.5rem; margin-bottom: 20px; }
+  .back-link { display: inline-block; margin-bottom: 20px; text-decoration: none; color: #666; font-size: 0.9rem; }
+  img { max-width: 100%; border-radius: 8px; }
+</style>
+</head>
+<body>
+  <article>
+    <a href="index.html" class="back-link">← Wróć do strony głównej</a>
+    <div id="post-content">Ładowanie treści...</div>
+  </article>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script>
+    async function loadFullPost() {
+      const params = new URLSearchParams(window.location.search);
+      const postName = params.get('post');
+      const container = document.getElementById('post-content');
+
+      if (!postName) {
+        container.innerHTML = "Nie znaleziono tekstu.";
+        return;
+      }
+
+      try {
+        const repoOwner = "pbarczewska";
+        const repoName = "pbarczewska.github.io";
+        const response = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/teksty/${postName}`);
+        const data = await response.json();
+        const content = atob(data.content); // Dekodowanie treści z GitHub API
+
+        // Wyciąganie tytułu i treści (usuwamy nagłówek CMS)
+        const bodyContent = content.split('---').pop().trim();
+        const titleMatch = content.match(/^title:\s*(.*)$/m);
+        const title = titleMatch ? titleMatch[1].replace(/['"]/g, "") : "Tekst";
+
+        container.innerHTML = `<h1>${title}</h1>` + marked.parse(bodyContent);
+        document.title = title + " - P. A. Barczewska";
+      } catch (e) {
+        container.innerHTML = "Błąd podczas ładowania tekstu.";
+        console.error(e);
+      }
+    }
+    loadFullPost();
+  </script>
+</body>
+</html>
