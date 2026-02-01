@@ -1,316 +1,196 @@
 <!doctype html>
 <html lang="pl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>P. A. Barczewska</title>
-  <meta name="description" content="Pisarka emocji. Kryminologia z ciekawości." />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>P. A. Barczewska</title>
 
-  <style>
-    :root{
-      --text: #1b1b1b;
-      --muted: rgba(0,0,0,.65);
-      --card: rgba(255,255,255,.86);
-      --card-strong: rgba(255,255,255,.92);
-      --border: rgba(0,0,0,.10);
-      --shadow: 0 18px 60px rgba(0,0,0,.18);
-      --radius: 26px;
-      --max: 980px;
-    }
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
 
-    *{ box-sizing:border-box; }
-    html, body{ height:100%; }
-    body{
-      margin:0;
-      color:var(--text);
-      font-family: ui-serif, Georgia, "Times New Roman", Times, serif;
-      background: #111;
-      overflow-x:hidden;
-    }
+<style>
+:root{
+  --radius:18px;
+  --shadow:0 18px 60px rgba(0,0,0,.35);
+  --glass:rgba(255,255,255,.62);
+}
 
-    /* TŁO – bez żadnych mgiełek/blurów */
-    body::before{
-      content:"";
-      position:fixed;
-      inset:0;
-      background:
-        linear-gradient(to bottom, rgba(0,0,0,.40), rgba(0,0,0,.55)),
-        var(--bg) center / cover no-repeat;
-      transform: translateZ(0);
-      z-index:-2;
-    }
+*{box-sizing:border-box}
 
-    /* Delikatne przyciemnienie na dole – żeby stopka nie ginęła */
-    body::after{
-      content:"";
-      position:fixed;
-      inset:0;
-      background: radial-gradient(1200px 500px at 50% -10%, rgba(255,255,255,.10), transparent 55%);
-      z-index:-1;
-      pointer-events:none;
-    }
+body{
+  margin:0;
+  font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  color:#151515;
+  background:url("background.jpg") center/cover fixed no-repeat;
+  min-height:100vh;
+}
 
-    .wrap{
-      max-width: var(--max);
-      margin: 0 auto;
-      padding: 22px 16px 70px;
-    }
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:rgba(10,10,12,.45);
+  z-index:-1;
+}
 
-    header{
-      display:flex;
-      gap:14px;
-      align-items:center;
-      margin-top: 6px;
-      margin-bottom: 18px;
-    }
+header{
+  max-width:980px;
+  margin:24px auto 0;
+  padding:0 18px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  color:#fff;
+}
 
-    .avatar{
-      width:56px;
-      height:56px;
-      border-radius:999px;
-      border: 2px solid rgba(255,255,255,.55);
-      box-shadow: 0 10px 24px rgba(0,0,0,.25);
-      object-fit: cover;
-      background: rgba(255,255,255,.2);
-    }
+.logo{
+  width:54px;
+  height:54px;
+  border-radius:50%;
+  background:#fff;
+  object-fit:cover;
+  box-shadow:0 10px 30px rgba(0,0,0,.35);
+  cursor:pointer;
+}
 
-    .brand h1{
-      margin:0;
-      font-size: 28px;
-      letter-spacing: .5px;
-      color: rgba(255,255,255,.92);
-      text-shadow: 0 10px 25px rgba(0,0,0,.45);
-    }
-    .brand p{
-      margin: 3px 0 0;
-      color: rgba(255,255,255,.78);
-      font-size: 16px;
-      text-shadow: 0 10px 25px rgba(0,0,0,.45);
-    }
+header h1{
+  font-family:"Playfair Display",serif;
+  font-size:1.3rem;
+  margin:0;
+  line-height:1.1;
+}
 
-    .card{
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 20px 18px;
-      margin: 14px 0;
-    }
+main{
+  max-width:980px;
+  margin:22px auto 80px;
+  padding:0 18px;
+}
 
-    .hero{
-      padding: 26px 18px;
-    }
+.card{
+  background:var(--glass);
+  backdrop-filter:blur(7px);
+  -webkit-backdrop-filter:blur(7px);
+  border:1px solid rgba(255,255,255,.25);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:28px 24px;
+  margin-bottom:26px;
+}
 
-    .hero h2{
-      margin: 6px 0 8px;
-      font-size: 46px;
-      line-height: 1.05;
-      letter-spacing: .6px;
-      text-align:center;
-    }
-    .hero p{
-      margin:0;
-      text-align:center;
-      color: var(--muted);
-      font-size: 18px;
-      line-height: 1.55;
-    }
+.card h2{
+  font-family:"Playfair Display",serif;
+  font-size:1.9rem;
+  margin:0 0 12px;
+}
 
-    .section-title{
-      display:flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 10px;
-      margin-bottom: 8px;
-    }
-    .section-title h3{
-      margin:0;
-      font-size: 42px;
-      letter-spacing: .3px;
-    }
-    .section-title .hint{
-      margin:0;
-      color: rgba(0,0,0,.55);
-      font-size: 16px;
-    }
+.card p{
+  line-height:1.85;
+  opacity:.92;
+  margin:0 0 10px;
+}
 
-    .posts{
-      display:flex;
-      flex-direction:column;
-      gap: 14px;
-      margin-top: 10px;
-    }
+.section-title{
+  font-family:"Playfair Display",serif;
+  font-size:1.6rem;
+  margin:0 0 18px;
+}
 
-    .post{
-      background: var(--card-strong);
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      padding: 18px 16px;
-    }
+.post{
+  margin-bottom:22px;
+}
 
-    .tag{
-      display:inline-block;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      font-size: 12px;
-      letter-spacing:.3px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,.12);
-      background: rgba(255,255,255,.55);
-      color: rgba(0,0,0,.72);
-      margin-bottom: 8px;
-    }
+.post h3{
+  font-family:"Playfair Display",serif;
+  margin:0 0 6px;
+  font-size:1.25rem;
+}
 
-    .post h4{
-      margin: 6px 0 6px;
-      font-size: 28px;
-      letter-spacing:.2px;
-    }
+.post p{
+  margin:0 0 8px;
+}
 
-    .post p{
-      margin: 0 0 12px;
-      color: rgba(0,0,0,.72);
-      font-size: 17px;
-      line-height: 1.55;
-    }
+.read-more{
+  display:inline-block;
+  text-decoration:none;
+  color:#111;
+  border-bottom:1px solid rgba(0,0,0,.4);
+  padding-bottom:2px;
+}
 
-    .btn{
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      text-decoration:none;
-      padding: 12px 16px;
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,.15);
-      background: rgba(0,0,0,.80);
-      color: rgba(255,255,255,.92);
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      font-size: 14px;
-    }
+.read-more:hover{opacity:.7}
 
-    .btn:hover{ filter: brightness(1.05); }
+footer{
+  max-width:980px;
+  margin:30px auto 60px;
+  padding:0 18px;
+  color:rgba(255,255,255,.8);
+  text-align:center;
+  font-size:.9rem;
+}
 
-    footer{
-      text-align:center;
-      margin-top: 18px;
-      color: rgba(255,255,255,.65);
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      font-size: 12px;
-      text-shadow: 0 10px 25px rgba(0,0,0,.45);
-    }
-
-    /* Mobile tuning */
-    @media (max-width: 420px){
-      .hero h2{ font-size: 40px; }
-      .section-title h3{ font-size: 36px; }
-      .post h4{ font-size: 26px; }
-    }
-  </style>
+@media(max-width:520px){
+  .card{padding:22px 18px}
+  .card h2{font-size:1.6rem}
+}
+</style>
 </head>
 
-<body style="--bg: url('file_0000000006408722fa2ddd16807e0f8b7.png');">
-  <div class="wrap">
-    <header>
-      <img class="avatar" src="file_000000001f04720c8a514e8f7c6decad.png" alt="P. A. Barczewska" />
-      <div class="brand">
-        <h1>P. A. Barczewska</h1>
-        <p>Pisarka emocji. Kryminologia z ciekawości.</p>
-      </div>
-    </header>
+<body>
 
-    <section class="card hero">
-      <h2>P. A. Barczewska</h2>
-      <p>Piszę o emocjach, relacjach i o tym, co dzieje się z człowiekiem w momentach granicznych.</p>
-    </section>
+<header>
+  <img src="file_000000001f04720c8a514e8f7c6decad.png" class="logo"
+       onclick="adminClick()" alt="">
+  <h1>P. A. Barczewska<br><span style="font-weight:300;font-size:.9rem">Pisarka emocji. Kryminologia z ciekawości.</span></h1>
+</header>
 
-    <section class="card">
-      <div class="section-title">
-        <h3>Teksty</h3>
-        <p class="hint">Pokazuję 5 najnowszych.</p>
-      </div>
+<main>
 
-      <div id="posts" class="posts">
-        <!-- tu wpadną posty z posts.json -->
-      </div>
-    </section>
+  <section class="card">
+    <h2>O mnie</h2>
+    <p>
+      Piszę o emocjach, relacjach i o tym, co dzieje się z człowiekiem
+      w momentach granicznych. Interesuje mnie to, co niewypowiedziane —
+      napięcia, decyzje podejmowane w ciszy, drobne pęknięcia,
+      które zmieniają bieg historii.
+    </p>
+    <p>
+      Kryminologia jest dla mnie narzędziem myślenia — sposobem rozumienia
+      mechanizmów przemocy, władzy i odpowiedzialności.
+    </p>
+  </section>
 
-    <footer>© 2026 P. A. Barczewska</footer>
-  </div>
+  <section class="card">
+    <h2 class="section-title">Teksty</h2>
 
-  <script>
-    // USTAWIENIA (jeśli chcesz inne nazwy plików)
-    // Tło i avatar ustawiasz w HTML powyżej (style="--bg: ..." oraz src="...")
+    <div class="post">
+      <h3>Najlepsze rzeczy dzieją się w ciszy</h3>
+      <p>Czasem nie potrzeba odpowiedzi. Wystarczy zostać na chwilę w miejscu…</p>
+      <a class="read-more" href="teksty/najlepsze-rzeczy.html">Czytaj dalej</a>
+    </div>
 
-    function safeText(v){ return (v ?? "").toString(); }
+    <div class="post">
+      <h3>Między strachem a decyzją</h3>
+      <p>Każda decyzja ma swój moment graniczny…</p>
+      <a class="read-more" href="teksty/miedzy-strachem.html">Czytaj dalej</a>
+    </div>
 
-    function postLink(p){
-      // Preferuj pełny URL jeśli jest
-      if (p.url) return p.url;
-      // slug -> /teksty/slug.html
-      if (p.slug) return "teksty/" + p.slug + ".html";
-      // fallback
-      return "#";
-    }
+  </section>
 
-    function renderPosts(list){
-      const root = document.getElementById("posts");
-      root.innerHTML = "";
+</main>
 
-      const take = list.slice(0,5);
-      if (!take.length){
-        root.innerHTML = '<div class="post"><p>Brak wpisów do wyświetlenia.</p></div>';
-        return;
-      }
+<footer>
+  © <span id="year"></span>
+</footer>
 
-      for (const p of take){
-        const tag = safeText(p.category || p.kategoria || "Tekst");
-        const title = safeText(p.title || p.tytul || "Bez tytułu");
-        const excerpt = safeText(p.excerpt || p.zajawka || p.snippet || "");
+<script>
+let clicks=0;
+function adminClick(){
+  clicks++;
+  if(clicks>=4) location.href="/admin/";
+}
+document.getElementById("year").textContent=new Date().getFullYear();
+</script>
 
-        const a = document.createElement("a");
-        a.href = postLink(p);
-        a.className = "btn";
-        a.textContent = "Czytaj dalej";
-
-        const el = document.createElement("div");
-        el.className = "post";
-        el.innerHTML = `
-          <span class="tag">${tag}</span>
-          <h4>${title}</h4>
-          <p>${excerpt}</p>
-        `;
-        el.appendChild(a);
-        root.appendChild(el);
-      }
-    }
-
-    async function boot(){
-      try{
-        const res = await fetch("posts.json", { cache: "no-store" });
-        if(!res.ok) throw new Error("posts.json HTTP " + res.status);
-        const data = await res.json();
-
-        // obsłuż: [..] albo {posts:[..]}
-        const list = Array.isArray(data) ? data : (data.posts || []);
-        // sort po dacie jeśli jest
-        list.sort((a,b)=>{
-          const da = new Date(a.date || a.data || 0).getTime();
-          const db = new Date(b.date || b.data || 0).getTime();
-          return db - da;
-        });
-
-        renderPosts(list);
-      }catch(e){
-        const root = document.getElementById("posts");
-        root.innerHTML = `
-          <div class="post">
-            <p><strong>Nie mogę wczytać posts.json</strong></p>
-            <p>Sprawdź czy plik istnieje w głównym katalogu repo i ma poprawny JSON.</p>
-          </div>
-        `;
-      }
-    }
-    boot();
-  </script>
 </body>
 </html>
