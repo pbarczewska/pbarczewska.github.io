@@ -4,148 +4,128 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Czytasz tekst - P. A. Barczewska</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+
 <style>
-  body {
-    margin: 0;
-    font-family: "Inter", sans-serif;
-    background: #f4f4f4;
-    color: #151515;
-    line-height: 1.8;
-  }
-  article {
-    max-width: 800px;
-    margin: 40px auto;
-    background: #fff;
-    padding: 40px;
-    border-radius: 18px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-  }
-  h1 { font-family: "Playfair Display", serif; font-size: 2.5rem; margin-bottom: 20px; }
-  .back-link { display: inline-block; margin-bottom: 20px; text-decoration: none; color: #666; font-size: 0.9rem; }
-  img { max-width: 100%; border-radius: 8px; }
+body{
+  margin:0;
+  font-family:"Inter",sans-serif;
+  background:#f4f4f4;
+  color:#151515;
+  line-height:1.8;
+}
+article{
+  max-width:800px;
+  margin:40px auto;
+  background:#fff;
+  padding:40px;
+  border-radius:18px;
+  box-shadow:0 10px 30px rgba(0,0,0,.1);
+}
+h1{
+  font-family:"Playfair Display",serif;
+  font-size:2.5rem;
+  margin-bottom:20px;
+}
+.back-link{
+  display:inline-block;
+  margin-bottom:20px;
+  text-decoration:none;
+  color:#666;
+  font-size:.9rem;
+}
 </style>
 </head>
+
 <body>
-  <article>
-    <a href="index.html" class="back-link">← Wróć do strony głównej</a>
-    <div id="post-content">Ładowanie treści...</div>
-  </article>
 
-  <script>
-    // === CONTENTFUL: Twoje dane (POPRAWIONE) ===
-    const CONTENTFUL_SPACE_ID  = "4njr98q3c6g4";
-    const CONTENTFUL_ENV       = "master";
-    const CONTENTFUL_CDA_TOKEN = "FqnzOZKFLkbxgkOlf35AU9326HVpYkJ6jUhClOE98";
-    const CONTENTFUL_LOCALE    = "en-US";
+<article>
+  <a href="index.html" class="back-link">← Wróć do strony głównej</a>
+  <div id="post-content">Ładowanie treści…</div>
+</article>
 
-    async function loadFullPost() {
-      const params = new URLSearchParams(window.location.search);
-      const entryId = params.get("id");
-      const container = document.getElementById("post-content");
+<script>
+/* ========= CONTENTFUL ========= */
+const SPACE_ID = "4njr98q3c6g4";
+const ENV      = "master";
+const TOKEN    = "FqnzOZKFLkbxgkOlf35AU9326HVpYkJ6jUhClOE98";
+const LOCALE   = "en-US";
+/* ============================== */
 
-      if (!entryId) {
-        container.textContent = "Nie znaleziono tekstu.";
-        return;
-      }
+const params = new URLSearchParams(window.location.search);
+const ENTRY_ID = params.get("id");
+const box = document.getElementById("post-content");
 
-      const url =
-        `https://cdn.contentful.com/spaces/${encodeURIComponent(CONTENTFUL_SPACE_ID)}` +
-        `/environments/${encodeURIComponent(CONTENTFUL_ENV)}` +
-        `/entries/${encodeURIComponent(entryId)}` +
-        `?access_token=${encodeURIComponent(CONTENTFUL_CDA_TOKEN)}` +
-        `&locale=${encodeURIComponent(CONTENTFUL_LOCALE)}`;
+if(!ENTRY_ID){
+  box.textContent = "Brak ID wpisu.";
+}else{
+  loadPost();
+}
 
-      try {
-        const res = await fetch(url, { cache: "no-store" });
-        if (!res.ok) {
-          container.textContent = "Błąd podczas ładowania tekstu.";
-          return;
-        }
+async function loadPost(){
+  const url =
+    `https://cdn.contentful.com/spaces/${SPACE_ID}` +
+    `/environments/${ENV}` +
+    `/entries/${ENTRY_ID}` +
+    `?access_token=${TOKEN}&locale=${LOCALE}`;
 
-        const data = await res.json();
-        const title = (data.fields && data.fields.title) ? String(data.fields.title) : "Tekst";
-        const rich  = (data.fields && data.fields.content) ? data.fields.content : null;
-
-        const bodyHtml = richTextToHtml(rich);
-
-        container.innerHTML = `<h1>${escapeHtml(title)}</h1>` + bodyHtml;
-        document.title = `${title} - P. A. Barczewska`;
-      } catch (e) {
-        container.textContent = "Błąd podczas ładowania tekstu.";
-      }
+  try{
+    const res = await fetch(url,{cache:"no-store"});
+    if(!res.ok){
+      box.textContent = "Błąd API Contentful.";
+      return;
     }
 
-    // Minimalny renderer Rich Text -> HTML
-    function richTextToHtml(doc) {
-      if (!doc || !Array.isArray(doc.content)) return "";
+    const data = await res.json();
+    const title = data.fields?.title || "Tekst";
+    const rich  = data.fields?.content;
 
-      const renderNode = (node) => {
-        if (!node) return "";
-        const c = Array.isArray(node.content) ? node.content.map(renderNode).join("") : "";
+    box.innerHTML =
+      `<h1>${esc(title)}</h1>` +
+      renderRichText(rich);
 
-        switch (node.nodeType) {
-          case "document": return c;
+    document.title = title + " - P. A. Barczewska";
 
-          case "paragraph": return `<p>${c}</p>`;
-          case "heading-1": return `<h1>${c}</h1>`;
-          case "heading-2": return `<h2>${c}</h2>`;
-          case "heading-3": return `<h3>${c}</h3>`;
-          case "heading-4": return `<h4>${c}</h4>`;
-          case "heading-5": return `<h5>${c}</h5>`;
-          case "heading-6": return `<h6>${c}</h6>`;
+  }catch(e){
+    box.textContent = "Błąd ładowania treści.";
+  }
+}
 
-          case "unordered-list": return `<ul>${c}</ul>`;
-          case "ordered-list": return `<ol>${c}</ol>`;
-          case "list-item": return `<li>${c}</li>`;
+function renderRichText(doc){
+  if(!doc || !doc.content) return "";
 
-          case "blockquote": return `<blockquote>${c}</blockquote>`;
-          case "hr": return `<hr/>`;
+  const walk = n => {
+    if(n.nodeType === "text") return esc(n.value || "");
+    if(!n.content) return "";
 
-          case "text": {
-            let t = escapeHtml(node.value || "");
-            if (Array.isArray(node.marks)) {
-              for (const m of node.marks) {
-                if (m.type === "bold") t = `<strong>${t}</strong>`;
-                if (m.type === "italic") t = `<em>${t}</em>`;
-                if (m.type === "underline") t = `<u>${t}</u>`;
-                if (m.type === "code") t = `<code>${t}</code>`;
-              }
-            }
-            return t;
-          }
+    const c = n.content.map(walk).join("");
 
-          case "hyperlink": {
-            const href = node.data && node.data.uri ? String(node.data.uri) : "#";
-            return `<a href="${escapeAttr(href)}" target="_blank" rel="noopener noreferrer">${c}</a>`;
-          }
-
-          default:
-            return c;
-        }
-      };
-
-      return renderNode({ nodeType: "document", content: doc.content });
+    switch(n.nodeType){
+      case "paragraph": return `<p>${c}</p>`;
+      case "heading-1": return `<h1>${c}</h1>`;
+      case "heading-2": return `<h2>${c}</h2>`;
+      case "heading-3": return `<h3>${c}</h3>`;
+      case "unordered-list": return `<ul>${c}</ul>`;
+      case "ordered-list": return `<ol>${c}</ol>`;
+      case "list-item": return `<li>${c}</li>`;
+      case "blockquote": return `<blockquote>${c}</blockquote>`;
+      default: return c;
     }
+  };
 
-    function escapeHtml(str) {
-      return String(str)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
+  return doc.content.map(walk).join("");
+}
 
-    function escapeAttr(str) {
-      return String(str)
-        .replaceAll("&", "&amp;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;");
-    }
+function esc(s){
+  return String(s)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+</script>
 
-    loadFullPost();
-  </script>
 </body>
 </html>
