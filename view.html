@@ -32,52 +32,43 @@
     <div id="post-content">Ładowanie treści...</div>
   </article>
 
-  <!-- Render Rich Text z Contentful do HTML -->
-  <script src="https://unpkg.com/@contentful/rich-text-types@16/dist/rich-text-types.umd.js"></script>
-  <script src="https://unpkg.com/@contentful/rich-text-html-renderer@16/dist/rich-text-html-renderer.umd.js"></script>
-
   <script>
-    // === KONFIGURACJA CONTENTFUL (wklejasz swoje wartości) ===
-    const CONTENTFUL_SPACE_ID = "PASTE_SPACE_ID";
+    // === CONTENTFUL (ten sam token co w index) ===
+    const CONTENTFUL_SPACE_ID = "4njr98q3c6g4";
     const CONTENTFUL_ENV = "master";
-    const CONTENTFUL_CDA_TOKEN = "PASTE_CDA_TOKEN";
+    const CONTENTFUL_CDA_TOKEN = "WKLEJ_TUTAJ_CDA_TOKEN";
 
     async function loadFullPost() {
       const params = new URLSearchParams(window.location.search);
-      const id = params.get('id');
-      const container = document.getElementById('post-content');
+      const entryId = params.get("id");
+      const container = document.getElementById("post-content");
 
-      if (!id) {
+      if (!entryId) {
         container.innerHTML = "Nie znaleziono tekstu.";
         return;
       }
-
-      if (CONTENTFUL_SPACE_ID === "PASTE_SPACE_ID" || CONTENTFUL_CDA_TOKEN === "PASTE_CDA_TOKEN") {
-        container.innerHTML = "Brak konfiguracji Contentful w kodzie.";
+      if (!CONTENTFUL_CDA_TOKEN || CONTENTFUL_CDA_TOKEN === "WKLEJ_TUTAJ_CDA_TOKEN") {
+        container.innerHTML = "Brak konfiguracji Contentful (token).";
         return;
       }
 
       const url =
         `https://cdn.contentful.com/spaces/${encodeURIComponent(CONTENTFUL_SPACE_ID)}` +
         `/environments/${encodeURIComponent(CONTENTFUL_ENV)}` +
-        `/entries/${encodeURIComponent(id)}?access_token=${encodeURIComponent(CONTENTFUL_CDA_TOKEN)}`;
+        `/entries/${encodeURIComponent(entryId)}?access_token=${encodeURIComponent(CONTENTFUL_CDA_TOKEN)}`;
 
       try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error("HTTP " + response.status);
-        const data = await response.json();
-
-        const title = (data.fields && data.fields.title) ? String(data.fields.title) : "Tekst";
-        const rich = data.fields ? data.fields.content : null;
-
-        let bodyHtml = "";
-        if (rich && rich.nodeType) {
-          bodyHtml = window.contentfulRichTextHtmlRenderer.documentToHtmlString(rich);
-        } else {
-          bodyHtml = "<p>(Brak treści)</p>";
+        const res = await fetch(url);
+        if (!res.ok) {
+          container.innerHTML = "Błąd podczas ładowania tekstu.";
+          return;
         }
+        const data = await res.json();
 
-        container.innerHTML = `<h1>${escapeHtml(title)}</h1>` + bodyHtml;
+        const title = data.fields && data.fields.title ? String(data.fields.title) : "Tekst";
+        const rich = data.fields && data.fields.content ? data.fields.content : null;
+
+        container.innerHTML = `<h1>${escapeHtml(title)}</h1>` + richTextToHtml(rich);
         document.title = title + " - P. A. Barczewska";
       } catch (e) {
         container.innerHTML = "Błąd podczas ładowania tekstu.";
@@ -91,6 +82,49 @@
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#039;");
+    }
+
+    // Minimalny renderer Contentful Rich Text -> HTML (wystarczy na akapity, nagłówki, listy, linki)
+    function richTextToHtml(rich) {
+      if (!rich || !Array.isArray(rich.content)) return "";
+
+      function renderNode(node) {
+        if (!node) return "";
+
+        if (node.nodeType === "text") {
+          let text = escapeHtml(node.value || "");
+          // marks (bold/italic/underline)
+          if (Array.isArray(node.marks)) {
+            for (const m of node.marks) {
+              if (m.type === "bold") text = `<strong>${text}</strong>`;
+              if (m.type === "italic") text = `<em>${text}</em>`;
+              if (m.type === "underline") text = `<u>${text}</u>`;
+            }
+          }
+          return text;
+        }
+
+        const inner = Array.isArray(node.content) ? node.content.map(renderNode).join("") : "";
+
+        switch (node.nodeType) {
+          case "paragraph": return `<p>${inner}</p>`;
+          case "heading-1": return `<h1>${inner}</h1>`;
+          case "heading-2": return `<h2>${inner}</h2>`;
+          case "heading-3": return `<h3>${inner}</h3>`;
+          case "unordered-list": return `<ul>${inner}</ul>`;
+          case "ordered-list": return `<ol>${inner}</ol>`;
+          case "list-item": return `<li>${inner}</li>`;
+          case "blockquote": return `<blockquote>${inner}</blockquote>`;
+          case "hyperlink": {
+            const href = node.data && node.data.uri ? String(node.data.uri) : "#";
+            return `<a href="${escapeHtml(href)}" target="_blank" rel="noopener">${inner}</a>`;
+          }
+          default:
+            return inner;
+        }
+      }
+
+      return rich.content.map(renderNode).join("");
     }
 
     loadFullPost();
