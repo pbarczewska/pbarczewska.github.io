@@ -86,7 +86,6 @@ footer{ color:rgba(255,255,255,0.85); font-size:0.9rem; text-align:center; paddi
   <section>
     <h2>Teksty</h2>
 
-    <!-- Możesz zostawić te 2 ręczne wpisy albo je usunąć – wygląd i tak bez zmian -->
     <article class="post-preview">
       <h3>Najlepsze rzeczy dzieją się w ciszy</h3>
       <p>Czasem nie potrzeba odpowiedzi. Wystarczy zostać na chwilę w miejscu, w którym coś zaczyna być prawdziwe…</p>
@@ -115,20 +114,21 @@ footer{ color:rgba(255,255,255,0.85); font-size:0.9rem; text-align:center; paddi
 <script>
   document.getElementById("year").textContent = new Date().getFullYear();
 
-  // === Contentful: WKLEJONE NA STAŁE (nic nie wpisujesz) ===
+  // === CONTENTFUL: GOTOWE (Twoje dane) ===
   const CONTENTFUL_SPACE_ID = "4njr98q3c6g4";
   const CONTENTFUL_ENV = "master";
-  const CONTENTFUL_CDA_TOKEN = "FqnzOZKFLbxgkOlF35AU9326HVpykJ16jtuHc10E98";
+  const CONTENTFUL_CDA_TOKEN = "FqnzOZKFLkbxgk0lf35AU9326HVpykJI6jtuHcIOE98";
+  const CONTENT_TYPE_ID = "article"; // Content Type ID w API (typowo: article)
 
-  // === Pobranie wpisów z Contentful (Published) ===
   async function loadDynamicPosts() {
-    const container = document.getElementById("dynamic-posts");
+    const container = document.getElementById('dynamic-posts');
     if (!container) return;
 
     const url =
       `https://cdn.contentful.com/spaces/${encodeURIComponent(CONTENTFUL_SPACE_ID)}` +
       `/environments/${encodeURIComponent(CONTENTFUL_ENV)}` +
       `/entries?access_token=${encodeURIComponent(CONTENTFUL_CDA_TOKEN)}` +
+      `&content_type=${encodeURIComponent(CONTENT_TYPE_ID)}` +
       `&order=-sys.createdAt&limit=50`;
 
     try {
@@ -140,25 +140,23 @@ footer{ color:rgba(255,255,255,0.85); font-size:0.9rem; text-align:center; paddi
       if (!items.length) return;
 
       for (const item of items) {
-        // bierzemy tylko wpisy, które mają pola: title + content (Twoje Field ID: title, content)
-        if (!item.fields || !item.fields.title || !item.fields.content) continue;
+        const title = (item.fields && item.fields.title) ? String(item.fields.title) : "Tekst";
+        const excerpt = richTextToPlain(item.fields && item.fields.content).slice(0, 160);
 
-        const title = String(item.fields.title);
-        const excerpt = richTextToPlain(item.fields.content).slice(0, 160);
-
-        const article = document.createElement("article");
-        article.className = "post-preview";
+        const article = document.createElement('article');
+        article.className = 'post-preview';
         article.innerHTML =
           `<h3>${escapeHtml(title)}</h3>` +
-          `<p>${escapeHtml(excerpt)}${excerpt ? "…" : ""}</p>` +
+          `<p>${escapeHtml(excerpt)}${excerpt.length ? "…" : ""}</p>` +
           `<a class="read-more" href="view.html?id=${encodeURIComponent(item.sys.id)}">Czytaj dalej</a>`;
-
         container.appendChild(article);
       }
-    } catch (e) {}
+    } catch (e) {
+      // celowo cisza
+    }
   }
 
-  // Rich Text -> plain (zajawka)
+  // Rich Text (Contentful) -> plain text do zajawki
   function richTextToPlain(rich) {
     if (!rich || !rich.content) return "";
     const out = [];
@@ -181,7 +179,7 @@ footer{ color:rgba(255,255,255,0.85); font-size:0.9rem; text-align:center; paddi
 
   loadDynamicPosts();
 
-  // === Sekretne wejście: 4x logo -> Contentful (Twoje views/entries) ===
+  // === 4x logo -> Contentful (Twoja strona widoku entries) ===
   const logo = document.getElementById("secretLogo");
   let clicks = 0, timer = null;
 
@@ -189,6 +187,7 @@ footer{ color:rgba(255,255,255,0.85); font-size:0.9rem; text-align:center; paddi
     clicks++;
     clearTimeout(timer);
     timer = setTimeout(() => clicks = 0, 1500);
+
     if (clicks >= 4) {
       window.location.href = "https://app.contentful.com/spaces/4njr98q3c6g4/views/entries";
     }
