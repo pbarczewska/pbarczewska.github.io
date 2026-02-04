@@ -4,128 +4,60 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Czytasz tekst - P. A. Barczewska</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
-
 <style>
-body{
-  margin:0;
-  font-family:"Inter",sans-serif;
-  background:#f4f4f4;
-  color:#151515;
-  line-height:1.8;
-}
-article{
-  max-width:800px;
-  margin:40px auto;
-  background:#fff;
-  padding:40px;
-  border-radius:18px;
-  box-shadow:0 10px 30px rgba(0,0,0,.1);
-}
-h1{
-  font-family:"Playfair Display",serif;
-  font-size:2.5rem;
-  margin-bottom:20px;
-}
-.back-link{
-  display:inline-block;
-  margin-bottom:20px;
-  text-decoration:none;
-  color:#666;
-  font-size:.9rem;
-}
+body{ margin:0; font-family:"Inter",sans-serif; background:#f4f4f4; color:#151515; line-height:1.8; }
+article{ max-width:800px; margin:40px auto; background:#fff; padding:40px; border-radius:18px; box-shadow:0 10px 30px rgba(0,0,0,.1); }
+h1{ font-family:"Playfair Display",serif; font-size:2.5rem; margin-bottom:20px; }
+.back-link{ display:inline-block; margin-bottom:20px; text-decoration:none; color:#666; font-size:.9rem; }
+#post-content p { margin-bottom: 1.5rem; }
 </style>
 </head>
-
 <body>
-
 <article>
   <a href="index.html" class="back-link">← Wróć do strony głównej</a>
   <div id="post-content">Ładowanie treści…</div>
 </article>
 
 <script>
-/* ========= CONTENTFUL ========= */
 const SPACE_ID = "4njr98q3c6g4";
-const ENV      = "master";
-const TOKEN    = "FqnzOZKFLkbxgkOlf35AU9326HVpYkJ6jUhClOE98";
-const LOCALE   = "en-US";
-/* ============================== */
+const TOKEN    = "GjcqWIsIud_ukRdgbQPJrzwsRbwkBxO4g5K6-SMwE2Y";
 
 const params = new URLSearchParams(window.location.search);
 const ENTRY_ID = params.get("id");
 const box = document.getElementById("post-content");
 
-if(!ENTRY_ID){
-  box.textContent = "Brak ID wpisu.";
-}else{
-  loadPost();
-}
-
-async function loadPost(){
-  const url =
-    `https://cdn.contentful.com/spaces/${SPACE_ID}` +
-    `/environments/${ENV}` +
-    `/entries/${ENTRY_ID}` +
-    `?access_token=${TOKEN}&locale=${LOCALE}`;
-
-  try{
-    const res = await fetch(url,{cache:"no-store"});
-    if(!res.ok){
-      box.textContent = "Błąd API Contentful.";
-      return;
-    }
-
+async function loadPost() {
+  if(!ENTRY_ID) return;
+  const url = `https://cdn.contentful.com/spaces/${SPACE_ID}/environments/master/entries/${ENTRY_ID}?access_token=${TOKEN}&locale=*`;
+  
+  try {
+    const res = await fetch(url);
     const data = await res.json();
-    const title = data.fields?.title || "Tekst";
-    const rich  = data.fields?.content;
-
-    box.innerHTML =
-      `<h1>${esc(title)}</h1>` +
-      renderRichText(rich);
+    const localeKey = Object.keys(data.fields.title)[0];
+    
+    const title = data.fields.title[localeKey];
+    const content = data.fields.content[localeKey];
 
     document.title = title + " - P. A. Barczewska";
-
-  }catch(e){
-    box.textContent = "Błąd ładowania treści.";
+    box.innerHTML = `<h1>${title}</h1>` + renderRichText(content);
+  } catch(e) {
+    box.textContent = "Błąd pobierania tekstu.";
   }
 }
 
-function renderRichText(doc){
-  if(!doc || !doc.content) return "";
-
-  const walk = n => {
-    if(n.nodeType === "text") return esc(n.value || "");
-    if(!n.content) return "";
-
-    const c = n.content.map(walk).join("");
-
-    switch(n.nodeType){
-      case "paragraph": return `<p>${c}</p>`;
-      case "heading-1": return `<h1>${c}</h1>`;
-      case "heading-2": return `<h2>${c}</h2>`;
-      case "heading-3": return `<h3>${c}</h3>`;
-      case "unordered-list": return `<ul>${c}</ul>`;
-      case "ordered-list": return `<ol>${c}</ol>`;
-      case "list-item": return `<li>${c}</li>`;
-      case "blockquote": return `<blockquote>${c}</blockquote>`;
-      default: return c;
+function renderRichText(nodes) {
+  if(!nodes || !nodes.content) return "";
+  return nodes.content.map(node => {
+    if(node.nodeType === "paragraph") {
+      const text = node.content.map(c => c.value).join("");
+      return `<p>${text}</p>`;
     }
-  };
-
-  return doc.content.map(walk).join("");
+    return "";
+  }).join("");
 }
 
-function esc(s){
-  return String(s)
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-}
+loadPost();
 </script>
-
 </body>
 </html>
