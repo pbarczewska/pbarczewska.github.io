@@ -32,72 +32,65 @@
     <div id="post-content">Ładowanie treści...</div>
   </article>
 
-  <!-- Contentful Rich Text -> HTML (UMD) -->
-  <script src="https://cdn.jsdelivr.net/npm/@contentful/rich-text-html-renderer@16/dist/rich-text-html-renderer.umd.js"></script>
+  <!-- Render Rich Text z Contentful do HTML -->
+  <script src="https://unpkg.com/@contentful/rich-text-types@16/dist/rich-text-types.umd.js"></script>
+  <script src="https://unpkg.com/@contentful/rich-text-html-renderer@16/dist/rich-text-html-renderer.umd.js"></script>
 
   <script>
-    // === Contentful (Twoje dane) ===
-    const CF_SPACE_ID  = "4njr98q3c6g4";
-    const CF_ENV_ID    = "master";
-    const CF_CDA_TOKEN = "FqnzOZKFLbxgk0lf35AU9326HVpyKJ6jtUhClOE98";
+    // === KONFIGURACJA CONTENTFUL (wklejasz swoje wartości) ===
+    const CONTENTFUL_SPACE_ID = "PASTE_SPACE_ID";
+    const CONTENTFUL_ENV = "master";
+    const CONTENTFUL_CDA_TOKEN = "PASTE_CDA_TOKEN";
 
-    // Field IDs w Twoim content type "Article"
-    const FIELD_TITLE_ID = "title";
-    const FIELD_RICH_ID  = "content";
+    async function loadFullPost() {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('id');
+      const container = document.getElementById('post-content');
 
-    function escapeHtml(s) {
-      return String(s ?? "")
+      if (!id) {
+        container.innerHTML = "Nie znaleziono tekstu.";
+        return;
+      }
+
+      if (CONTENTFUL_SPACE_ID === "PASTE_SPACE_ID" || CONTENTFUL_CDA_TOKEN === "PASTE_CDA_TOKEN") {
+        container.innerHTML = "Brak konfiguracji Contentful w kodzie.";
+        return;
+      }
+
+      const url =
+        `https://cdn.contentful.com/spaces/${encodeURIComponent(CONTENTFUL_SPACE_ID)}` +
+        `/environments/${encodeURIComponent(CONTENTFUL_ENV)}` +
+        `/entries/${encodeURIComponent(id)}?access_token=${encodeURIComponent(CONTENTFUL_CDA_TOKEN)}`;
+
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("HTTP " + response.status);
+        const data = await response.json();
+
+        const title = (data.fields && data.fields.title) ? String(data.fields.title) : "Tekst";
+        const rich = data.fields ? data.fields.content : null;
+
+        let bodyHtml = "";
+        if (rich && rich.nodeType) {
+          bodyHtml = window.contentfulRichTextHtmlRenderer.documentToHtmlString(rich);
+        } else {
+          bodyHtml = "<p>(Brak treści)</p>";
+        }
+
+        container.innerHTML = `<h1>${escapeHtml(title)}</h1>` + bodyHtml;
+        document.title = title + " - P. A. Barczewska";
+      } catch (e) {
+        container.innerHTML = "Błąd podczas ładowania tekstu.";
+      }
+    }
+
+    function escapeHtml(str) {
+      return String(str)
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#039;");
-    }
-
-    async function loadFullPost() {
-      const params = new URLSearchParams(window.location.search);
-      const entryId = params.get("id"); // UWAGA: teraz czytamy ?id=... (z indexa)
-
-      const container = document.getElementById("post-content");
-
-      if (!entryId) {
-        container.innerHTML = "Nie znaleziono tekstu (brak parametru id).";
-        return;
-      }
-
-      try {
-        const url =
-          `https://cdn.contentful.com/spaces/${CF_SPACE_ID}` +
-          `/environments/${CF_ENV_ID}/entries/${encodeURIComponent(entryId)}` +
-          `?access_token=${encodeURIComponent(CF_CDA_TOKEN)}`;
-
-        const res = await fetch(url, { cache: "no-store" });
-        if (!res.ok) {
-          container.innerHTML = "Nie znaleziono tekstu (błąd pobierania).";
-          return;
-        }
-
-        const entry = await res.json();
-        const fields = entry.fields || {};
-
-        const title = fields[FIELD_TITLE_ID] || "Tekst";
-        const rich  = fields[FIELD_RICH_ID];
-
-        // renderer z UMD:
-        const renderer = window.contentfulRichTextHtmlRenderer;
-        if (!renderer || typeof renderer.documentToHtmlString !== "function") {
-          container.innerHTML = `<h1>${escapeHtml(title)}</h1><p>Błąd renderer-a Rich Text.</p>`;
-          return;
-        }
-
-        const htmlBody = rich ? renderer.documentToHtmlString(rich) : "<p>(Brak treści)</p>";
-
-        container.innerHTML = `<h1>${escapeHtml(title)}</h1>` + htmlBody;
-        document.title = title + " - P. A. Barczewska";
-      } catch (e) {
-        container.innerHTML = "Błąd podczas ładowania tekstu.";
-        console.error(e);
-      }
     }
 
     loadFullPost();
