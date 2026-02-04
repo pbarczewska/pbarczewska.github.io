@@ -27,7 +27,7 @@ section{ background:rgba(255,255,255,0.78); backdrop-filter: blur(12px); -webkit
 section h2{ font-family:"Playfair Display", serif; font-size:1.8rem; margin:0 0 15px; }
 section p{ font-size:0.97rem; line-height:1.7; margin:0 0 12px; }
 
-.work-block{ margin-top:22px; padding-topukrant-top:18px; border-top:1px solid rgba(0,0,0,0.1); }
+.work-block{ margin-top:22px; padding-top:18px; border-top:1px solid rgba(0,0,0,0.1); }
 .work-block h3{ font-family:"Playfair Display", serif; font-size:1.2rem; margin:0 0 8px; }
 .work-status{ margin-top:22px; font-style:italic; opacity:0.8; font-size:0.95rem; }
 
@@ -86,7 +86,7 @@ footer{ color:rgba(255,255,255,0.85); font-size:0.9rem; text-align:center; paddi
   <section>
     <h2>Teksty</h2>
 
-    <!-- te 2 ręczne wpisy możesz zostawić lub usunąć -->
+    <!-- Możesz zostawić te 2 ręczne wpisy albo je usunąć – wygląd i tak bez zmian -->
     <article class="post-preview">
       <h3>Najlepsze rzeczy dzieją się w ciszy</h3>
       <p>Czasem nie potrzeba odpowiedzi. Wystarczy zostać na chwilę w miejscu, w którym coś zaczyna być prawdziwe…</p>
@@ -115,17 +115,15 @@ footer{ color:rgba(255,255,255,0.85); font-size:0.9rem; text-align:center; paddi
 <script>
   document.getElementById("year").textContent = new Date().getFullYear();
 
-  // === CONTENTFUL (tylko to ustawiasz) ===
+  // === Contentful: WKLEJONE NA STAŁE (nic nie wpisujesz) ===
   const CONTENTFUL_SPACE_ID = "4njr98q3c6g4";
   const CONTENTFUL_ENV = "master";
-  const CONTENTFUL_CDA_TOKEN = "WKLEJ_TUTAJ_CDA_TOKEN";
+  const CONTENTFUL_CDA_TOKEN = "FqnzOZKFLbxgkOlF35AU9326HVpykJ16jtuHc10E98";
 
-  // === Pobieranie listy wpisów (Published) ===
+  // === Pobranie wpisów z Contentful (Published) ===
   async function loadDynamicPosts() {
     const container = document.getElementById("dynamic-posts");
     if (!container) return;
-
-    if (!CONTENTFUL_CDA_TOKEN || CONTENTFUL_CDA_TOKEN === "WKLEJ_TUTAJ_CDA_TOKEN") return;
 
     const url =
       `https://cdn.contentful.com/spaces/${encodeURIComponent(CONTENTFUL_SPACE_ID)}` +
@@ -142,7 +140,7 @@ footer{ color:rgba(255,255,255,0.85); font-size:0.9rem; text-align:center; paddi
       if (!items.length) return;
 
       for (const item of items) {
-        // wymagamy pól: title + content (tak jak u Ciebie w Contentful: Field ID "title" i "content")
+        // bierzemy tylko wpisy, które mają pola: title + content (Twoje Field ID: title, content)
         if (!item.fields || !item.fields.title || !item.fields.content) continue;
 
         const title = String(item.fields.title);
@@ -157,11 +155,10 @@ footer{ color:rgba(255,255,255,0.85); font-size:0.9rem; text-align:center; paddi
 
         container.appendChild(article);
       }
-    } catch (e) {
-      // cisza celowo
-    }
+    } catch (e) {}
   }
 
+  // Rich Text -> plain (zajawka)
   function richTextToPlain(rich) {
     if (!rich || !rich.content) return "";
     const out = [];
@@ -184,7 +181,7 @@ footer{ color:rgba(255,255,255,0.85); font-size:0.9rem; text-align:center; paddi
 
   loadDynamicPosts();
 
-  // === 4x logo -> Contentful (Twoje "All content") ===
+  // === Sekretne wejście: 4x logo -> Contentful (Twoje views/entries) ===
   const logo = document.getElementById("secretLogo");
   let clicks = 0, timer = null;
 
@@ -193,7 +190,7 @@ footer{ color:rgba(255,255,255,0.85); font-size:0.9rem; text-align:center; paddi
     clearTimeout(timer);
     timer = setTimeout(() => clicks = 0, 1500);
     if (clicks >= 4) {
-      window.location.href = `https://app.contentful.com/spaces/${encodeURIComponent(CONTENTFUL_SPACE_ID)}/views/entries`;
+      window.location.href = "https://app.contentful.com/spaces/4njr98q3c6g4/views/entries";
     }
   };
 
