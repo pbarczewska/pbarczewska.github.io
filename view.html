@@ -33,47 +33,50 @@
   </article>
 
   <script>
-    // === CONTENTFUL: GOTOWE (Twoje dane) ===
-    const CONTENTFUL_SPACE_ID = "4njr98q3c6g4";
-    const CONTENTFUL_ENV = "master";
-    const CONTENTFUL_CDA_TOKEN = "FqnzOZKFLkbxgk0lf35AU9326HVpykJI6jtuHcIOE98";
+    // === CONTENTFUL: Twoje dane (POPRAWIONE) ===
+    const CONTENTFUL_SPACE_ID  = "4njr98q3c6g4";
+    const CONTENTFUL_ENV       = "master";
+    const CONTENTFUL_CDA_TOKEN = "FqnzOZKFLkbxgkOlf35AU9326HVpYkJ6jUhClOE98";
+    const CONTENTFUL_LOCALE    = "en-US";
 
     async function loadFullPost() {
       const params = new URLSearchParams(window.location.search);
-      const entryId = params.get('id');
-      const container = document.getElementById('post-content');
+      const entryId = params.get("id");
+      const container = document.getElementById("post-content");
 
       if (!entryId) {
-        container.innerHTML = "Nie znaleziono tekstu.";
+        container.textContent = "Nie znaleziono tekstu.";
         return;
       }
 
       const url =
         `https://cdn.contentful.com/spaces/${encodeURIComponent(CONTENTFUL_SPACE_ID)}` +
         `/environments/${encodeURIComponent(CONTENTFUL_ENV)}` +
-        `/entries/${encodeURIComponent(entryId)}?access_token=${encodeURIComponent(CONTENTFUL_CDA_TOKEN)}`;
+        `/entries/${encodeURIComponent(entryId)}` +
+        `?access_token=${encodeURIComponent(CONTENTFUL_CDA_TOKEN)}` +
+        `&locale=${encodeURIComponent(CONTENTFUL_LOCALE)}`;
 
       try {
-        const res = await fetch(url);
+        const res = await fetch(url, { cache: "no-store" });
         if (!res.ok) {
-          container.innerHTML = "Błąd podczas ładowania tekstu.";
+          container.textContent = "Błąd podczas ładowania tekstu.";
           return;
         }
 
         const data = await res.json();
         const title = (data.fields && data.fields.title) ? String(data.fields.title) : "Tekst";
-        const rich = (data.fields && data.fields.content) ? data.fields.content : null;
+        const rich  = (data.fields && data.fields.content) ? data.fields.content : null;
 
         const bodyHtml = richTextToHtml(rich);
 
         container.innerHTML = `<h1>${escapeHtml(title)}</h1>` + bodyHtml;
-        document.title = title + " - P. A. Barczewska";
+        document.title = `${title} - P. A. Barczewska`;
       } catch (e) {
-        container.innerHTML = "Błąd podczas ładowania tekstu.";
+        container.textContent = "Błąd podczas ładowania tekstu.";
       }
     }
 
-    // Minimalny renderer Rich Text -> HTML (wystarczy do normalnych tekstów)
+    // Minimalny renderer Rich Text -> HTML
     function richTextToHtml(doc) {
       if (!doc || !Array.isArray(doc.content)) return "";
 
@@ -118,7 +121,7 @@
           }
 
           default:
-            return c; // fallback
+            return c;
         }
       };
 
