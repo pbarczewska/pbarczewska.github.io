@@ -85,6 +85,8 @@ footer{ color:rgba(255,255,255,0.85); font-size:0.9rem; text-align:center; paddi
 
   <section>
     <h2>Teksty</h2>
+
+    <!-- Możesz zostawić te 2 ręczne wpisy albo je usunąć – wygląd i tak bez zmian -->
     <article class="post-preview">
       <h3>Najlepsze rzeczy dzieją się w ciszy</h3>
       <p>Czasem nie potrzeba odpowiedzi. Wystarczy zostać na chwilę w miejscu, w którym coś zaczyna być prawdziwe…</p>
@@ -95,6 +97,7 @@ footer{ color:rgba(255,255,255,0.85); font-size:0.9rem; text-align:center; paddi
       <p>Każda decyzja ma swój moment graniczny. Ten, w którym ciało wie wcześniej niż my…</p>
       <a class="read-more" href="teksty/miedzy-strachem.html">Czytaj dalej</a>
     </article>
+
     <div id="dynamic-posts"></div>
   </section>
 </main>
@@ -109,32 +112,69 @@ footer{ color:rgba(255,255,255,0.85); font-size:0.9rem; text-align:center; paddi
   <p>© <span id="year"></span> P. A. Barczewska</p>
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
   document.getElementById("year").textContent = new Date().getFullYear();
 
-  // =========================
-  // DYNAMIC POSTS: Contentful
-  // =========================
-  // (tylko opublikowane wpisy; Content Type ID zakładamy: "article")
-  const CF_SPACE_ID = "4njr98q3c6g4";
-  const CF_ENV_ID = "master";
-  const CF_CDA_TOKEN = "FqnzOZKFLkbxgk0lf35AU9326HVpyKJ6jtUhClOE98";
-  const CF_CONTENT_TYPE_ID = "article";
+  // === 1) KONFIGURACJA CONTENTFUL (wklejasz swoje wartości) ===
+  const CONTENTFUL_SPACE_ID = "PASTE_SPACE_ID";
+  const CONTENTFUL_ENV = "master";
+  const CONTENTFUL_CDA_TOKEN = "PASTE_CDA_TOKEN";
+  // API ID content type (nie nazwa „Article”, tylko ID w API). Najczęściej: "article"
+  const CONTENT_TYPE_ID = "article";
 
-  // Prosty wyciąg tekstu z Rich Text (na zajawkę)
-  function richTextToPlainText(node) {
-    if (!node) return "";
-    if (Array.isArray(node)) return node.map(richTextToPlainText).join(" ");
-    if (typeof node === "object") {
-      if (node.nodeType === "text") return node.value || "";
-      if (node.content) return richTextToPlainText(node.content);
+  // === 2) POBRANIE LISTY TEKSTÓW Z CONTENTFUL (tylko Published) ===
+  async function loadDynamicPosts() {
+    const container = document.getElementById('dynamic-posts');
+    if (!container) return;
+
+    // Jeżeli nie wkleiłeś tokenów, nie rób nic (żeby nie było błędów na stronie)
+    if (CONTENTFUL_SPACE_ID === "PASTE_SPACE_ID" || CONTENTFUL_CDA_TOKEN === "PASTE_CDA_TOKEN") return;
+
+    const url =
+      `https://cdn.contentful.com/spaces/${encodeURIComponent(CONTENTFUL_SPACE_ID)}` +
+      `/environments/${encodeURIComponent(CONTENTFUL_ENV)}` +
+      `/entries?access_token=${encodeURIComponent(CONTENTFUL_CDA_TOKEN)}` +
+      `&content_type=${encodeURIComponent(CONTENT_TYPE_ID)}` +
+      `&order=-sys.createdAt&limit=20`;
+
+    try {
+      const res = await fetch(url);
+      if (!res.ok) return;
+      const data = await res.json();
+      const items = Array.isArray(data.items) ? data.items : [];
+      if (!items.length) return;
+
+      for (const item of items) {
+        const title = (item.fields && item.fields.title) ? String(item.fields.title) : "Tekst";
+        const excerpt = richTextToPlain(item.fields && item.fields.content).slice(0, 160);
+
+        const article = document.createElement('article');
+        article.className = 'post-preview';
+        article.innerHTML =
+          `<h3>${escapeHtml(title)}</h3>` +
+          `<p>${escapeHtml(excerpt)}${excerpt.length ? "…" : ""}</p>` +
+          `<a class="read-more" href="view.html?id=${encodeURIComponent(item.sys.id)}">Czytaj dalej</a>`;
+        container.appendChild(article);
+      }
+    } catch (e) {
+      // celowo cisza
     }
-    return "";
   }
 
-  function escapeHtml(s) {
-    return String(s ?? "")
+  // Rich Text z Contentful → plain text (na zajawkę)
+  function richTextToPlain(rich) {
+    if (!rich || !rich.content) return "";
+    const out = [];
+    (function walk(node) {
+      if (!node) return;
+      if (node.nodeType === "text" && typeof node.value === "string") out.push(node.value);
+      if (Array.isArray(node.content)) node.content.forEach(walk);
+    })(rich);
+    return out.join(" ").replace(/\s+/g, " ").trim();
+  }
+
+  function escapeHtml(str) {
+    return String(str)
       .replaceAll("&", "&amp;")
       .replaceAll("<", "&lt;")
       .replaceAll(">", "&gt;")
@@ -142,60 +182,28 @@ footer{ color:rgba(255,255,255,0.85); font-size:0.9rem; text-align:center; paddi
       .replaceAll("'", "&#039;");
   }
 
-  async function loadDynamicPosts() {
-    const container = document.getElementById('dynamic-posts');
-
-    try {
-      const url =
-        `https://cdn.contentful.com/spaces/${CF_SPACE_ID}` +
-        `/environments/${CF_ENV_ID}` +
-        `/entries?access_token=${encodeURIComponent(CF_CDA_TOKEN)}` +
-        `&content_type=${encodeURIComponent(CF_CONTENT_TYPE_ID)}` +
-        `&order=-sys.updatedAt` +
-        `&limit=20`;
-
-      const response = await fetch(url, { cache: "no-store" });
-      if (!response.ok) return;
-
-      const data = await response.json();
-      const items = Array.isArray(data.items) ? data.items : [];
-      if (!items.length) return;
-
-      for (const entry of items) {
-        const fields = entry.fields || {};
-        const title = fields.title || "Tekst";
-        const plain = richTextToPlainText(fields.content).replace(/\s+/g, " ").trim();
-        const excerpt = plain ? (plain.length > 150 ? plain.slice(0, 150) + "..." : plain) : "";
-
-        const article = document.createElement('article');
-        article.className = 'post-preview';
-        article.innerHTML =
-          `<h3>${escapeHtml(title)}</h3>` +
-          `<p>${escapeHtml(excerpt)}</p>` +
-          `<a class="read-more" href="view.html?id=${encodeURIComponent(entry.sys.id)}">Czytaj dalej</a>`;
-
-        container.appendChild(article);
-      }
-    } catch (e) {
-      // cisza jak wcześniej
-    }
-  }
   loadDynamicPosts();
 
-  // =========================
-  // SECRET ADMIN ENTRY -> Contentful Entries
-  // =========================
+  // === 3) SEKRETNE WEJŚCIE: 4x logo -> Contentful (lista wpisów + Add entry) ===
   const logo = document.getElementById("secretLogo");
   let clicks = 0, timer = null;
-  const handler = (e) => {
+
+  const handler = () => {
     clicks++;
     clearTimeout(timer);
     timer = setTimeout(() => clicks = 0, 1500);
+
     if (clicks >= 4) {
-      // bezpośrednio do miejsca wpisywania/edycji tekstów w Contentful
-      window.location.href = "https://app.contentful.com/spaces/4njr98q3c6g4/entries";
+      // Minimalnie i skutecznie: przerzuca do „All content” w Contentful.
+      // Paulina klika „Add entry” i pisze.
+      const target =
+        `https://app.contentful.com/spaces/${encodeURIComponent(CONTENTFUL_SPACE_ID)}` +
+        `/environments/${encodeURIComponent(CONTENTFUL_ENV)}/entries`;
+
+      window.location.href = target;
     }
   };
+
   logo.addEventListener("touchend", handler);
   logo.addEventListener("click", handler);
 </script>
