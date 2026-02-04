@@ -33,15 +33,15 @@
   </article>
 
   <script>
-    // === Contentful: WKLEJONE NA STAŁE (nic nie wpisujesz) ===
+    // === CONTENTFUL: GOTOWE (Twoje dane) ===
     const CONTENTFUL_SPACE_ID = "4njr98q3c6g4";
     const CONTENTFUL_ENV = "master";
-    const CONTENTFUL_CDA_TOKEN = "FqnzOZKFLbxgkOlF35AU9326HVpykJ16jtuHc10E98";
+    const CONTENTFUL_CDA_TOKEN = "FqnzOZKFLkbxgk0lf35AU9326HVpykJI6jtuHcIOE98";
 
     async function loadFullPost() {
       const params = new URLSearchParams(window.location.search);
-      const entryId = params.get("id");
-      const container = document.getElementById("post-content");
+      const entryId = params.get('id');
+      const container = document.getElementById('post-content');
 
       if (!entryId) {
         container.innerHTML = "Nie znaleziono tekstu.";
@@ -61,14 +61,68 @@
         }
 
         const data = await res.json();
-        const title = data.fields && data.fields.title ? String(data.fields.title) : "Tekst";
-        const rich = data.fields && data.fields.content ? data.fields.content : null;
+        const title = (data.fields && data.fields.title) ? String(data.fields.title) : "Tekst";
+        const rich = (data.fields && data.fields.content) ? data.fields.content : null;
 
-        container.innerHTML = `<h1>${escapeHtml(title)}</h1>` + richTextToHtml(rich);
+        const bodyHtml = richTextToHtml(rich);
+
+        container.innerHTML = `<h1>${escapeHtml(title)}</h1>` + bodyHtml;
         document.title = title + " - P. A. Barczewska";
       } catch (e) {
         container.innerHTML = "Błąd podczas ładowania tekstu.";
       }
+    }
+
+    // Minimalny renderer Rich Text -> HTML (wystarczy do normalnych tekstów)
+    function richTextToHtml(doc) {
+      if (!doc || !Array.isArray(doc.content)) return "";
+
+      const renderNode = (node) => {
+        if (!node) return "";
+        const c = Array.isArray(node.content) ? node.content.map(renderNode).join("") : "";
+
+        switch (node.nodeType) {
+          case "document": return c;
+
+          case "paragraph": return `<p>${c}</p>`;
+          case "heading-1": return `<h1>${c}</h1>`;
+          case "heading-2": return `<h2>${c}</h2>`;
+          case "heading-3": return `<h3>${c}</h3>`;
+          case "heading-4": return `<h4>${c}</h4>`;
+          case "heading-5": return `<h5>${c}</h5>`;
+          case "heading-6": return `<h6>${c}</h6>`;
+
+          case "unordered-list": return `<ul>${c}</ul>`;
+          case "ordered-list": return `<ol>${c}</ol>`;
+          case "list-item": return `<li>${c}</li>`;
+
+          case "blockquote": return `<blockquote>${c}</blockquote>`;
+          case "hr": return `<hr/>`;
+
+          case "text": {
+            let t = escapeHtml(node.value || "");
+            if (Array.isArray(node.marks)) {
+              for (const m of node.marks) {
+                if (m.type === "bold") t = `<strong>${t}</strong>`;
+                if (m.type === "italic") t = `<em>${t}</em>`;
+                if (m.type === "underline") t = `<u>${t}</u>`;
+                if (m.type === "code") t = `<code>${t}</code>`;
+              }
+            }
+            return t;
+          }
+
+          case "hyperlink": {
+            const href = node.data && node.data.uri ? String(node.data.uri) : "#";
+            return `<a href="${escapeAttr(href)}" target="_blank" rel="noopener noreferrer">${c}</a>`;
+          }
+
+          default:
+            return c; // fallback
+        }
+      };
+
+      return renderNode({ nodeType: "document", content: doc.content });
     }
 
     function escapeHtml(str) {
@@ -80,46 +134,12 @@
         .replaceAll("'", "&#039;");
     }
 
-    // Contentful Rich Text -> HTML (podstawowe elementy, bez zmiany wyglądu strony)
-    function richTextToHtml(rich) {
-      if (!rich || !Array.isArray(rich.content)) return "";
-
-      function renderNode(node) {
-        if (!node) return "";
-
-        if (node.nodeType === "text") {
-          let text = escapeHtml(node.value || "");
-          if (Array.isArray(node.marks)) {
-            for (const m of node.marks) {
-              if (m.type === "bold") text = `<strong>${text}</strong>`;
-              if (m.type === "italic") text = `<em>${text}</em>`;
-              if (m.type === "underline") text = `<u>${text}</u>`;
-            }
-          }
-          return text;
-        }
-
-        const inner = Array.isArray(node.content) ? node.content.map(renderNode).join("") : "";
-
-        switch (node.nodeType) {
-          case "paragraph": return `<p>${inner}</p>`;
-          case "heading-1": return `<h1>${inner}</h1>`;
-          case "heading-2": return `<h2>${inner}</h2>`;
-          case "heading-3": return `<h3>${inner}</h3>`;
-          case "unordered-list": return `<ul>${inner}</ul>`;
-          case "ordered-list": return `<ol>${inner}</ol>`;
-          case "list-item": return `<li>${inner}</li>`;
-          case "blockquote": return `<blockquote>${inner}</blockquote>`;
-          case "hyperlink": {
-            const href = node.data && node.data.uri ? String(node.data.uri) : "#";
-            return `<a href="${escapeHtml(href)}" target="_blank" rel="noopener">${inner}</a>`;
-          }
-          default:
-            return inner;
-        }
-      }
-
-      return rich.content.map(renderNode).join("");
+    function escapeAttr(str) {
+      return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;");
     }
 
     loadFullPost();
