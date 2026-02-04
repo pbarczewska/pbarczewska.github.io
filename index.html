@@ -114,87 +114,67 @@ footer{ color:rgba(255,255,255,0.85); font-size:0.9rem; text-align:center; paddi
 <script>
   document.getElementById("year").textContent = new Date().getFullYear();
 
-  // === CONTENTFUL: GOTOWE (Twoje dane) ===
+  // === CONTENTFUL – KONFIGURACJA (JUŻ UZUPEŁNIONA) ===
   const CONTENTFUL_SPACE_ID = "4njr98q3c6g4";
   const CONTENTFUL_ENV = "master";
-  const CONTENTFUL_CDA_TOKEN = "FqnzOZKFLkbxgk0lf35AU9326HVpykJI6jtuHcIOE98";
-  const CONTENT_TYPE_ID = "article"; // Content Type ID w API (typowo: article)
+  const CONTENTFUL_CDA_TOKEN = "FqnzOZKFLkbxgkOlf35AU9326HVpYkJ6jUhClOE98";
+  const CONTENT_TYPE_ID = "article";
 
   async function loadDynamicPosts() {
     const container = document.getElementById('dynamic-posts');
     if (!container) return;
 
     const url =
-      `https://cdn.contentful.com/spaces/${encodeURIComponent(CONTENTFUL_SPACE_ID)}` +
-      `/environments/${encodeURIComponent(CONTENTFUL_ENV)}` +
-      `/entries?access_token=${encodeURIComponent(CONTENTFUL_CDA_TOKEN)}` +
-      `&content_type=${encodeURIComponent(CONTENT_TYPE_ID)}` +
-      `&order=-sys.createdAt&limit=50`;
+      `https://cdn.contentful.com/spaces/${CONTENTFUL_SPACE_ID}` +
+      `/environments/${CONTENTFUL_ENV}` +
+      `/entries?access_token=${CONTENTFUL_CDA_TOKEN}` +
+      `&content_type=${CONTENT_TYPE_ID}` +
+      `&order=-sys.createdAt`;
 
-    try {
-      const res = await fetch(url);
-      if (!res.ok) return;
+    const res = await fetch(url);
+    const data = await res.json();
 
-      const data = await res.json();
-      const items = Array.isArray(data.items) ? data.items : [];
-      if (!items.length) return;
+    container.innerHTML = "";
 
-      for (const item of items) {
-        const title = (item.fields && item.fields.title) ? String(item.fields.title) : "Tekst";
-        const excerpt = richTextToPlain(item.fields && item.fields.content).slice(0, 160);
+    data.items.forEach(item => {
+      const title = item.fields.title || "Tekst";
+      const text = richTextToPlain(item.fields.content).slice(0, 160);
 
-        const article = document.createElement('article');
-        article.className = 'post-preview';
-        article.innerHTML =
-          `<h3>${escapeHtml(title)}</h3>` +
-          `<p>${escapeHtml(excerpt)}${excerpt.length ? "…" : ""}</p>` +
-          `<a class="read-more" href="view.html?id=${encodeURIComponent(item.sys.id)}">Czytaj dalej</a>`;
-        container.appendChild(article);
-      }
-    } catch (e) {
-      // celowo cisza
-    }
+      const article = document.createElement("article");
+      article.className = "post-preview";
+      article.innerHTML = `
+        <h3>${title}</h3>
+        <p>${text}…</p>
+        <a class="read-more" href="view.html?id=${item.sys.id}">Czytaj dalej</a>
+      `;
+      container.appendChild(article);
+    });
   }
 
-  // Rich Text (Contentful) -> plain text do zajawki
   function richTextToPlain(rich) {
     if (!rich || !rich.content) return "";
-    const out = [];
-    (function walk(node) {
-      if (!node) return;
-      if (node.nodeType === "text" && typeof node.value === "string") out.push(node.value);
-      if (Array.isArray(node.content)) node.content.forEach(walk);
-    })(rich);
-    return out.join(" ").replace(/\s+/g, " ").trim();
-  }
-
-  function escapeHtml(str) {
-    return String(str)
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;");
+    let out = "";
+    rich.content.forEach(n => {
+      if (n.content) {
+        n.content.forEach(t => {
+          if (t.value) out += t.value + " ";
+        });
+      }
+    });
+    return out.trim();
   }
 
   loadDynamicPosts();
 
-  // === 4x logo -> Contentful (Twoja strona widoku entries) ===
+  // === 4x LOGO → CONTENTFUL ===
   const logo = document.getElementById("secretLogo");
-  let clicks = 0, timer = null;
-
-  const handler = () => {
+  let clicks = 0;
+  logo.addEventListener("click", () => {
     clicks++;
-    clearTimeout(timer);
-    timer = setTimeout(() => clicks = 0, 1500);
-
+    setTimeout(() => clicks = 0, 1500);
     if (clicks >= 4) {
-      window.location.href = "https://app.contentful.com/spaces/4njr98q3c6g4/views/entries";
+      window.location.href =
+        "https://app.contentful.com/spaces/4njr98q3c6g4/environments/master/entries";
     }
-  };
-
-  logo.addEventListener("touchend", handler);
-  logo.addEventListener("click", handler);
+  });
 </script>
-</body>
-</html>
