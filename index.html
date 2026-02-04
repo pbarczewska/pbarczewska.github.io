@@ -84,7 +84,7 @@ footer{ color:rgba(255,255,255,0.85); font-size:0.9rem; text-align:center; paddi
     <p class="work-status">Publikuję swoje teksty i jednocześnie pracuję nad kolejnymi projektami. Niektóre historie są zamknięte, inne wciąż się piszą — bo proces twórczy jest dla mnie równie ważny jak efekt końcowy.</p>
   </section>
 
-  <section id="teksty-sekcja">
+  <section id="main-teksty">
     <h2>Teksty</h2>
 
     <article class="post-preview">
@@ -122,42 +122,41 @@ footer{ color:rgba(255,255,255,0.85); font-size:0.9rem; text-align:center; paddi
 
   function richToText(doc) {
     if (!doc || !doc.content) return "";
-    return doc.content
-      .map(function(node) {
-        if (node.nodeType === "text") return node.value;
-        if (node.content) return richToText(node);
-        return "";
-      })
-      .join(" ");
+    var output = "";
+    doc.content.forEach(function(node) {
+      if (node.nodeType === "text") output += node.value;
+      else if (node.content) output += richToText(node);
+    });
+    return output;
   }
 
   async function loadDynamicPosts() {
-    const box = document.getElementById("dynamic-posts");
+    var box = document.getElementById("dynamic-posts");
     if (!box) return;
 
-    const url = "https://cdn.contentful.com/spaces/" + SPACE_ID + "/environments/master/entries?access_token=" + TOKEN + "&content_type=" + TYPE + "&locale=*&order=-sys.createdAt";
+    var url = "https://cdn.contentful.com/spaces/" + SPACE_ID + "/environments/master/entries?access_token=" + TOKEN + "&content_type=" + TYPE + "&locale=*&order=-sys.createdAt";
 
     try {
-      const res = await fetch(url);
-      const data = await res.json();
+      var res = await fetch(url);
+      var data = await res.json();
       
       if (data.items && data.items.length > 0) {
         data.items.forEach(function(item) {
-          const fields = item.fields;
-          const firstLocale = Object.keys(fields.title)[0];
+          var fields = item.fields;
+          var firstLocale = Object.keys(fields.title)[0];
           
-          const title = fields.title[firstLocale];
-          const rawContent = fields.content[firstLocale];
-          const fullText = richToText(rawContent);
-          const shortText = fullText.slice(0, 160) + (fullText.length > 160 ? "..." : "");
+          var title = fields.title[firstLocale];
+          var rawContent = fields.content[firstLocale];
+          var fullText = richToText(rawContent);
+          var shortText = fullText.substring(0, 160) + (fullText.length > 160 ? "..." : "");
 
-          const art = document.createElement("article");
+          var art = document.createElement("article");
           art.className = "post-preview";
           
-          art.innerHTML = 
-            "<h3>" + title + "</h3>" +
-            "<p>" + shortText + "</p>" +
-            "<a class='read-more' href='view.html?id=" + item.sys.id + "'>Czytaj dalej</a>";
+          // Bezpieczne wstawianie treści bez backticków (`)
+          art.innerHTML = "<h3>" + title + "</h3>" +
+                          "<p>" + shortText + "</p>" +
+                          "<a class='read-more' href='view.html?id=" + item.sys.id + "'>Czytaj dalej</a>";
           
           box.appendChild(art);
         });
@@ -169,14 +168,17 @@ footer{ color:rgba(255,255,255,0.85); font-size:0.9rem; text-align:center; paddi
 
   loadDynamicPosts();
 
-  let count = 0;
-  document.getElementById("secretLogo").onclick = function() {
-    count++;
-    if(count === 4) {
-      window.location.href = "https://app.contentful.com/spaces/" + SPACE_ID + "/entries";
-    }
-    setTimeout(function() { count = 0; }, 2000);
-  };
+  var count = 0;
+  var logo = document.getElementById("secretLogo");
+  if(logo) {
+    logo.onclick = function() {
+      count++;
+      if(count === 4) {
+        window.location.href = "https://app.contentful.com/spaces/" + SPACE_ID + "/entries";
+      }
+      setTimeout(function() { count = 0; }, 2000);
+    };
+  }
 </script>
 </body>
 </html>
