@@ -118,79 +118,12 @@ footer{ color:rgba(255,255,255,0.85); font-size:0.9rem; text-align:center; paddi
 <script>
   document.getElementById("year").textContent = new Date().getFullYear();
 
+  // ===== Contentful (CDA) =====
   const SPACE_ID = "4njr98q3c6g4";
-  const TOKEN = "FqnzOZKFLkbxgkOlf35AU9326HVpYkJ6jUhClOE98";
+  const ENV = "master"; // nie zgadujemy; jeśli chcesz inne env, zmieniasz tu
+  const TOKEN = "PASTE_YOUR_CDA_TOKEN_HERE"; // <- wklej "Content Delivery API - access token"
   const TYPE = "article";
-
-  // Auto-fallback environment: najpierw master, potem mistrz (bo na screenach miałeś "mistrz")
-  const ENV_CANDIDATES = ["master", "mistrz"];
-
-  function pickLocale(field){
-    if(!field) return "";
-    return field["pl-PL"] || field["en-US"] || "";
-  }
-
-  function richToText(r){
-    if(!r || !r.content) return "";
-    const out=[];
-    (function walk(n){
-      if(n.nodeType==="text") out.push(n.value);
-      if(n.content) n.content.forEach(walk);
-    })(r);
-    return out.join(" ").replace(/\s+/g," ").trim();
-  }
-
-  async function fetchEntries(env){
-    const url =
-      `https://cdn.contentful.com/spaces/${SPACE_ID}/environments/${encodeURIComponent(env)}/entries` +
-      `?access_token=${encodeURIComponent(TOKEN)}` +
-      `&content_type=${encodeURIComponent(TYPE)}` +
-      `&order=-sys.createdAt&limit=25`;
-    const res = await fetch(url, { cache: "no-store" });
-    if(!res.ok) return null;
-    const data = await res.json();
-    if(!data || !Array.isArray(data.items)) return null;
-    return data;
-  }
-
-  async function loadDynamicPosts(){
-    const box = document.getElementById("dynamic-posts");
-    if(!box) return;
-
-    let data = null;
-    let usedEnv = null;
-
-    for(const env of ENV_CANDIDATES){
-      data = await fetchEntries(env);
-      if(data && data.items && data.items.length){
-        usedEnv = env;
-        break;
-      }
-    }
-
-    if(!data || !data.items || !data.items.length){
-      // nic nie pokazujemy (żeby nie psuć wyglądu)
-      return;
-    }
-
-    data.items.forEach(item=>{
-      const title = pickLocale(item.fields && item.fields.title);
-      const text = richToText(pickLocale(item.fields && item.fields.content));
-
-      if(!title) return;
-
-      const el = document.createElement("article");
-      el.className="post-preview";
-      el.innerHTML =
-        `<h3>${escapeHtml(title)}</h3>` +
-        `<p>${escapeHtml(text.slice(0,160))}${text ? "…" : ""}</p>` +
-        `<a class="read-more" href="view.html?id=${encodeURIComponent(item.sys.id)}">Czytaj dalej</a>`;
-      box.appendChild(el);
-    });
-
-    // 4x logo -> Contentful entries w tym ENV, z którego faktycznie czytaliśmy
-    setupSecretLogo(usedEnv || "master");
-  }
+  const LOCALE = "en-US"; // u Ciebie treści siedzą w en-US
 
   function escapeHtml(str){
     return String(str)
@@ -201,23 +134,76 @@ footer{ color:rgba(255,255,255,0.85); font-size:0.9rem; text-align:center; paddi
       .replaceAll("'","&#039;");
   }
 
-  function setupSecretLogo(env){
+  function richToText(r){
+    if(!r || !r.content) return "";
+    const out=[];
+    (function walk(n){
+      if(!n) return;
+      if(n.nodeType==="text" && typeof n.value==="string") out.push(n.value);
+      if(Array.isArray(n.content)) n.content.forEach(walk);
+    })(r);
+    return out.join(" ").replace(/\s+/g," ").trim();
+  }
+
+  async function loadDynamicPosts(){
+    const box = document.getElementById("dynamic-posts");
+    if(!box) return;
+
+    // NIE ruszamy wyglądu: jak API padnie/0 wpisów, po prostu nic nie dokładamy
+    const url =
+      `https://cdn.contentful.com/spaces/${encodeURIComponent(SPACE_ID)}` +
+      `/environments/${encodeURIComponent(ENV)}` +
+      `/entries?access_token=${encodeURIComponent(TOKEN)}` +
+      `&content_type=${encodeURIComponent(TYPE)}` +
+      `&locale=${encodeURIComponent(LOCALE)}` +
+      `&order=-sys.createdAt&limit=25`;
+
+    try{
+      const res = await fetch(url, { cache: "no-store" });
+      if(!res.ok) return;
+
+      const data = await res.json();
+      if(!data || !Array.isArray(data.items) || data.items.length === 0) return;
+
+      for(const item of data.items){
+        const title = (item.fields && typeof item.fields.title === "string") ? item.fields.title : "";
+        const rich = item.fields ? item.fields.content : null;
+        const text = richToText(rich);
+
+        if(!title) continue;
+
+        const el = document.createElement("article");
+        el.className = "post-preview";
+        el.innerHTML =
+          `<h3>${escapeHtml(title)}</h3>` +
+          `<p>${escapeHtml(text.slice(0,160))}${text ? "…" : ""}</p>` +
+          `<a class="read-more" href="view.html?id=${encodeURIComponent(item.sys.id)}">Czytaj dalej</a>`;
+        box.appendChild(el);
+      }
+    }catch(e){
+      // celowo cisza
+    }
+  }
+
+  loadDynamicPosts();
+
+  // 4x logo -> Contentful entries
+  (function setupSecretLogo(){
     const logo = document.getElementById("secretLogo");
     if(!logo) return;
 
-    let c=0,t=null;
+    let c=0, t=null;
     const handler = ()=>{
       c++; clearTimeout(t);
       t=setTimeout(()=>c=0,1500);
       if(c>=4){
-        location.href = `https://app.contentful.com/spaces/${SPACE_ID}/environments/${encodeURIComponent(env)}/entries`;
+        location.href = `https://app.contentful.com/spaces/${SPACE_ID}/environments/${encodeURIComponent(ENV)}/entries`;
       }
     };
+
     logo.addEventListener("click", handler);
     logo.addEventListener("touchend", handler);
-  }
-
-  loadDynamicPosts();
+  })();
 </script>
 
 </body>
