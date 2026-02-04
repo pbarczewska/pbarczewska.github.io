@@ -1,228 +1,142 @@
 <!doctype html>
 <html lang="pl">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>P. A. Barczewska</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>P. A. Barczewska</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-  <style>
-    :root{ --radius: 35px; --shadow: 0 10px 40px rgba(0,0,0,0.2); }
-    *{ box-sizing:border-box; }
-    body{ margin:0; font-family:"Inter", sans-serif; color:#151515; background-image:url("file_000000006408722fa2ddd16807e0f8b7.png"); background-size:cover; background-position:center; background-attachment:fixed; min-height:100vh; }
-    body::before{ content:""; position:fixed; inset:0; background:rgba(0,0,0,0.35); z-index:-1; }
+<style>
+:root{ --radius: 35px; --shadow: 0 10px 40px rgba(0,0,0,0.2); }
+*{ box-sizing:border-box; }
+body{ margin:0; font-family:"Inter", sans-serif; color:#151515; background-image:url("file_000000006408722fa2ddd16807e0f8b7.png"); background-size:cover; background-position:center; background-attachment:fixed; min-height:100vh; }
+body::before{ content:""; position:fixed; inset:0; background:rgba(0,0,0,0.35); z-index:-1; }
 
-    header{ max-width:980px; margin:24px auto 0; padding:0 18px; display:flex; align-items:center; gap:14px; color:#fff; }
-    .logo{ width:64px; height:64px; border-radius:50%; background:#fff; object-fit:cover; box-shadow:0 10px 30px rgba(0,0,0,0.3); flex:0 0 auto; cursor:pointer; }
-    header h1{ font-family:"Playfair Display", serif; font-size:1.5rem; margin:0; }
+header{ max-width:980px; margin:24px auto 0; padding:0 18px; display:flex; align-items:center; gap:14px; color:#fff; }
+.logo{ width:64px; height:64px; border-radius:50%; background:#fff; object-fit:cover; box-shadow:0 10px 30px rgba(0,0,0,0.3); cursor:pointer; }
+header h1{ font-family:"Playfair Display", serif; font-size:1.5rem; margin:0; }
 
-    .hero{ max-width:980px; margin:20px auto; padding:80px 20px; border-radius:var(--radius); background:rgba(255,255,255,0.15); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border:1px solid rgba(255,255,255,0.2); text-align:center; color:#fff; box-shadow: var(--shadow); }
-    .hero h2{ font-family:"Playfair Display", serif; font-size:2.5rem; margin:0; }
+.hero{ max-width:980px; margin:20px auto; padding:80px 20px; border-radius:var(--radius); background:rgba(255,255,255,0.15); backdrop-filter: blur(15px); border:1px solid rgba(255,255,255,0.2); text-align:center; color:#fff; box-shadow: var(--shadow); }
+.hero h2{ font-family:"Playfair Display", serif; font-size:2.5rem; margin:0; }
 
-    main{ max-width:980px; margin:0 auto; padding:0 18px; }
-    section{ background:rgba(255,255,255,0.78); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius:var(--radius); box-shadow:var(--shadow); padding:35px 30px; margin-bottom:25px; border: 1px solid rgba(255,255,255,0.3); }
-    section h2{ font-family:"Playfair Display", serif; font-size:1.8rem; margin:0 0 15px; }
-    section p{ font-size:0.97rem; line-height:1.7; margin:0 0 12px; }
+main{ max-width:980px; margin:0 auto; padding:0 18px; }
+section{ background:rgba(255,255,255,0.78); backdrop-filter: blur(12px); border-radius:var(--radius); box-shadow:var(--shadow); padding:35px 30px; margin-bottom:25px; border: 1px solid rgba(255,255,255,0.3); }
+section h2{ font-family:"Playfair Display", serif; font-size:1.8rem; margin:0 0 15px; }
+section p{ font-size:0.97rem; line-height:1.7; margin:0 0 12px; }
 
-    .work-block{ margin-top:22px; padding-top:18px; border-top:1px solid rgba(0,0,0,0.1); }
-    .work-block h3{ font-family:"Playfair Display", serif; font-size:1.2rem; margin:0 0 8px; }
-    .work-status{ margin-top:22px; font-style:italic; opacity:0.8; font-size:0.95rem; }
+.post-preview{ margin-top:22px; padding-top:20px; border-top:1px solid rgba(0,0,0,0.1); }
+.post-preview h3{ font-family:"Playfair Display", serif; font-size:1.25rem; margin:0 0 8px; }
+.read-more{ display:inline-block; margin-top:10px; text-decoration:none; color:#111; font-weight:600; border-bottom:1px solid #111; padding-bottom:2px; }
 
-    .post-preview{ margin-top:22px; padding-top:20px; border-top:1px solid rgba(0,0,0,0.1); }
-    .post-preview h3{ font-family:"Playfair Display", serif; font-size:1.25rem; margin:0 0 8px; }
-    .read-more{ display:inline-block; margin-top:10px; text-decoration:none; color:#111; font-weight:600; border-bottom:1px solid #111; padding-bottom:2px; }
-
-    .social-links { display: flex; justify-content: center; gap: 12px; margin: 35px 0 15px; flex-wrap: wrap; }
-    .social-link { display: flex; align-items: center; gap: 8px; color: #fff; text-decoration: none; font-size: 0.85rem; background: rgba(255,255,255,0.15); padding: 12px 18px; border-radius: 30px; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.2); transition: 0.3s; }
-    .social-link:hover { background: rgba(255,255,255,0.3); transform: translateY(-3px); }
-
-    footer{ color:rgba(255,255,255,0.85); font-size:0.9rem; text-align:center; padding-bottom:60px; }
-    @media (max-width:520px){ :root{ --radius: 30px; } .hero h2{ font-size:2.1rem; } section{ padding:28px 22px; } }
-  </style>
+footer{ color:rgba(255,255,255,0.85); font-size:0.9rem; text-align:center; padding-bottom:60px; }
+</style>
 </head>
 
 <body>
-  <header>
-    <img id="secretLogo" class="logo" src="file_000000001f04720c8a514e8f7c6decad.png" alt="Logo">
-    <div>
-      <h1>P. A. Barczewska</h1>
-      <p>Pisarka emocji. Kryminologia z ciekawości.</p>
-    </div>
-  </header>
 
-  <div class="hero">
-    <h2>P. A. Barczewska</h2>
+<header>
+  <img id="secretLogo" class="logo" src="file_000000001f04720c8a514e8f7c6decad.png" alt="Logo">
+  <div>
+    <h1>P. A. Barczewska</h1>
     <p>Pisarka emocji. Kryminologia z ciekawości.</p>
   </div>
+</header>
 
-  <main>
-    <section>
-      <h2>O mnie</h2>
-      <p>Piszę o emocjach, relacjach i o tym, co dzieje się z człowiekiem w momentach granicznych. Interesuje mnie to, co niewypowiedziane — napięcia, decyzje podejmowane w ciszy, drobne pęknięcia, które zmieniają bieg historii.</p>
-      <p>Kryminologia jest dla mnie narzędziem myślenia. Ukończone studia pozwoliły mi lepiej rozumieć mechanizmy przemocy, wiktymologii oraz zachowań ludzkich, ale nie po to, by oceniać czy pouczać. To zaplecze poznawcze, które porządkuje ciekawość i pogłębia spojrzenie.</p>
-      <p>Nie udzielam porad ani diagnoz. Pokazuję warsztat, sposób patrzenia i pytania, które sobie stawiam — zarówno w literaturze, jak i w refleksji nad rzeczywistością.</p>
-    </section>
+<div class="hero">
+  <h2>P. A. Barczewska</h2>
+  <p>Pisarka emocji. Kryminologia z ciekawości.</p>
+</div>
 
-    <section>
-      <h2>Twórczość</h2>
-      <div class="work-block">
-        <h3>Kryminał / psychologia</h3>
-        <p>Najbliższy jest mi kryminał oparty na emocjach i perspektywie człowieka, nie na samej zbrodni. Interesują mnie motywacje, relacje władzy, mechanizmy przemocy i to, jak łatwo granice się przesuwają.</p>
-      </div>
-      <div class="work-block">
-        <h3>Romans</h3>
-        <p>Romans traktuję jako przestrzeń do opowiadania o bliskości, zależnościach i potrzebie bycia widzianym. To historie o napięciu emocjonalnym, wyborach i konsekwencjach, które nie zawsze są oczywiste ani wygodne.</p>
-      </div>
-      <div class="work-block">
-        <h3>Horror</h3>
-        <p>Horror pojawia się tam, gdzie strach nie jest krzykiem, lecz ciszą. Bardziej interesuje mnie niepokój niż dosłowność — moment, w którym coś zaczyna się wymykać, a czytelnik czuje, że nie wszystko zostało nazwane.</p>
-      </div>
-      <p class="work-status">Publikuję swoje teksty i jednocześnie pracuję nad kolejnymi projektami. Niektóre historie są zamknięte, inne wciąż się piszą — bo proces twórczy jest dla mnie równie ważny jak efekt końcowy.</p>
-    </section>
+<main>
+<section>
+<h2>Teksty</h2>
 
-    <section>
-      <h2>Teksty</h2>
+<!-- RĘCZNE WPISY – ZOSTAJĄ -->
+<article class="post-preview">
+  <h3>Najlepsze rzeczy dzieją się w ciszy</h3>
+  <p>Czasem nie potrzeba odpowiedzi. Wystarczy zostać na chwilę w miejscu, w którym coś zaczyna być prawdziwe…</p>
+  <a class="read-more" href="teksty/najlepsze-rzeczy.html">Czytaj dalej</a>
+</article>
 
-      <!-- Te 2 ręczne wpisy zostają bez zmian (stare widoki nietknięte). -->
-      <article class="post-preview">
-        <h3>Najlepsze rzeczy dzieją się w ciszy</h3>
-        <p>Czasem nie potrzeba odpowiedzi. Wystarczy zostać na chwilę w miejscu, w którym coś zaczyna być prawdziwe…</p>
-        <a class="read-more" href="teksty/najlepsze-rzeczy.html">Czytaj dalej</a>
-      </article>
-      <article class="post-preview">
-        <h3>Między strachem a decyzją</h3>
-        <p>Każda decyzja ma swój moment graniczny. Ten, w którym ciało wie wcześniej niż my…</p>
-        <a class="read-more" href="teksty/miedzy-strachem.html">Czytaj dalej</a>
-      </article>
+<article class="post-preview">
+  <h3>Między strachem a decyzją</h3>
+  <p>Każda decyzja ma swój moment graniczny. Ten, w którym ciało wie wcześniej niż my…</p>
+  <a class="read-more" href="teksty/miedzy-strachem.html">Czytaj dalej</a>
+</article>
 
-      <!-- Tu wpadają wpisy z Contentful -->
-      <div id="dynamic-posts"></div>
-    </section>
-  </main>
+<!-- CONTENTFUL -->
+<div id="dynamic-posts"></div>
 
-  <footer>
-    <div class="social-links">
-      <a href="mailto:p.a.barczewska@gmail.com" class="social-link"><i class="fas fa-envelope"></i> Email</a>
-      <a href="https://www.instagram.com/p.a.barczewska" target="_blank" class="social-link"><i class="fab fa-instagram"></i> Instagram</a>
-      <a href="https://www.tiktok.com/@p.a.barczewska" target="_blank" class="social-link"><i class="fab fa-tiktok"></i> TikTok</a>
-      <a href="https://www.wattpad.com/user/pabarczewska" target="_blank" class="social-link"><i class="fas fa-pen-nib"></i> Wattpad</a>
-    </div>
-    <p>© <span id="year"></span> P. A. Barczewska</p>
-  </footer>
+</section>
+</main>
 
-  <script>
-    document.getElementById("year").textContent = new Date().getFullYear();
+<footer>
+<p>© <span id="year"></span> P. A. Barczewska</p>
+</footer>
 
-    // =========================
-    // CONTENTFUL (Twoje dane)
-    // =========================
-    const CONTENTFUL_SPACE_ID  = "4njr98q3c6g4";
-    const CONTENTFUL_ENV       = "master";
-    const CONTENTFUL_CDA_TOKEN = "FqnzOZKFLkbxgkOlf35AU9326HVpYkJ6jUhClOE98";
-    const CONTENT_TYPE_ID      = "article";
+<script>
+document.getElementById("year").textContent = new Date().getFullYear();
 
-    // Klucz: u Ciebie treści są w en-US, więc wymuszamy locale.
-    const CONTENTFUL_LOCALE    = "en-US";
+const SPACE_ID = "4njr98q3c6g4";
+const ENV = "master";
+const TOKEN = "FqnzOZKFLkbxgkOlf35AU9326HVpYkJ6jUhClOE98";
+const TYPE = "article";
 
-    // =========================
-    // Ładowanie listy wpisów
-    // =========================
-    async function loadDynamicPosts() {
-      const container = document.getElementById("dynamic-posts");
-      if (!container) return;
+function pickLocale(field){
+  if(!field) return "";
+  return field["pl-PL"] || field["en-US"] || "";
+}
 
-      // Czyścimy (żeby nie dublowało po powrocie z historii)
-      container.innerHTML = "";
+function richToText(r){
+  if(!r || !r.content) return "";
+  let out=[];
+  (function walk(n){
+    if(n.nodeType==="text") out.push(n.value);
+    if(n.content) n.content.forEach(walk);
+  })(r);
+  return out.join(" ").trim();
+}
 
-      const url =
-        `https://cdn.contentful.com/spaces/${encodeURIComponent(CONTENTFUL_SPACE_ID)}` +
-        `/environments/${encodeURIComponent(CONTENTFUL_ENV)}` +
-        `/entries?access_token=${encodeURIComponent(CONTENTFUL_CDA_TOKEN)}` +
-        `&content_type=${encodeURIComponent(CONTENT_TYPE_ID)}` +
-        `&locale=${encodeURIComponent(CONTENTFUL_LOCALE)}` +
-        `&order=-sys.createdAt&limit=50`;
+async function loadDynamicPosts(){
+  const box = document.getElementById("dynamic-posts");
+  const url =
+    `https://cdn.contentful.com/spaces/${SPACE_ID}/environments/${ENV}/entries`+
+    `?access_token=${TOKEN}&content_type=${TYPE}&order=-sys.createdAt`;
 
-      try {
-        const res = await fetch(url, { cache: "no-store" });
-        if (!res.ok) return;
+  const res = await fetch(url);
+  const data = await res.json();
+  if(!data.items) return;
 
-        const data = await res.json();
-        const items = Array.isArray(data.items) ? data.items : [];
-        if (!items.length) return;
+  data.items.forEach(item=>{
+    const title = pickLocale(item.fields.title);
+    const text = richToText(pickLocale(item.fields.content));
 
-        for (const item of items) {
-          const title = safeText(item?.fields?.title || "Tekst");
-          const excerpt = safeText(richTextToPlain(item?.fields?.content)).slice(0, 160);
-          const id = item?.sys?.id ? String(item.sys.id) : "";
+    if(!title) return;
 
-          if (!id) continue;
+    const el = document.createElement("article");
+    el.className="post-preview";
+    el.innerHTML =
+      `<h3>${title}</h3>
+       <p>${text.slice(0,160)}…</p>
+       <a class="read-more" href="view.html?id=${item.sys.id}">Czytaj dalej</a>`;
+    box.appendChild(el);
+  });
+}
 
-          const article = document.createElement("article");
-          article.className = "post-preview";
-          article.innerHTML =
-            `<h3>${escapeHtml(title)}</h3>` +
-            `<p>${escapeHtml(excerpt)}${excerpt ? "…" : ""}</p>` +
-            `<a class="read-more" href="view.html?id=${encodeURIComponent(id)}">Czytaj dalej</a>`;
+loadDynamicPosts();
 
-          container.appendChild(article);
-        }
-      } catch (e) {
-        // celowo cisza: strona ma wyglądać normalnie nawet jak API padnie
-      }
-    }
+/* 4x logo → Contentful */
+let c=0,t=null;
+secretLogo.onclick=()=>{
+  c++; clearTimeout(t);
+  t=setTimeout(()=>c=0,1500);
+  if(c>=4) location.href=`https://app.contentful.com/spaces/${SPACE_ID}/environments/${ENV}/entries`;
+};
+</script>
 
-    // Rich Text (Contentful) -> plain text (na zajawkę)
-    function richTextToPlain(rich) {
-      if (!rich || !rich.content) return "";
-      const out = [];
-      (function walk(node) {
-        if (!node) return;
-        if (node.nodeType === "text" && typeof node.value === "string") out.push(node.value);
-        if (Array.isArray(node.content)) node.content.forEach(walk);
-      })(rich);
-      return out.join(" ").replace(/\s+/g, " ").trim();
-    }
-
-    function safeText(v) {
-      return (v === null || v === undefined) ? "" : String(v);
-    }
-
-    function escapeHtml(str) {
-      return String(str)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
-
-    loadDynamicPosts();
-
-    // =========================
-    // 4x LOGO -> Contentful "All content"
-    // =========================
-    const logo = document.getElementById("secretLogo");
-    let clicks = 0, timer = null;
-
-    function secretClickHandler() {
-      clicks++;
-      clearTimeout(timer);
-      timer = setTimeout(() => clicks = 0, 1500);
-
-      if (clicks >= 4) {
-        const target =
-          `https://app.contentful.com/spaces/${encodeURIComponent(CONTENTFUL_SPACE_ID)}` +
-          `/environments/${encodeURIComponent(CONTENTFUL_ENV)}/entries`;
-        window.location.href = target;
-      }
-    }
-
-    logo.addEventListener("click", secretClickHandler);
-    logo.addEventListener("touchend", secretClickHandler);
-  </script>
 </body>
 </html>
