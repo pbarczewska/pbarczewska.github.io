@@ -32,18 +32,18 @@
     <div id="post-content">Ładowanie treści...</div>
   </article>
 
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  <script>
-    // =========================
-    // CONTENTFUL (FULL POST VIEW)
-    // =========================
-    // Wklej te SAME dane co w index.html:
-    const CONTENTFUL_SPACE_ID = "WSTAW_SPACE_ID";
-    const CONTENTFUL_ENV = "master";
-    const CONTENTFUL_CDA_TOKEN = "WSTAW_CONTENT_DELIVERY_TOKEN";
+  <!-- Contentful Rich Text -> HTML (UMD) -->
+  <script src="https://cdn.jsdelivr.net/npm/@contentful/rich-text-html-renderer@16/dist/rich-text-html-renderer.umd.js"></script>
 
-    // Pole z treścią (Long text). Jeśli masz inne ID — zmień.
-    const FIELD_BODY_ID = "body";
+  <script>
+    // === Contentful (Twoje dane) ===
+    const CF_SPACE_ID  = "4njr98q3c6g4";
+    const CF_ENV_ID    = "master";
+    const CF_CDA_TOKEN = "FqnzOZKFLbxgk0lf35AU9326HVpyKJ6jtUhClOE98";
+
+    // Field IDs w Twoim content type "Article"
+    const FIELD_TITLE_ID = "title";
+    const FIELD_RICH_ID  = "content";
 
     function escapeHtml(s) {
       return String(s ?? "")
@@ -56,43 +56,43 @@
 
     async function loadFullPost() {
       const params = new URLSearchParams(window.location.search);
-      const entryId = params.get('id');
-      const container = document.getElementById('post-content');
+      const entryId = params.get("id"); // UWAGA: teraz czytamy ?id=... (z indexa)
+
+      const container = document.getElementById("post-content");
 
       if (!entryId) {
-        container.innerHTML = "Nie znaleziono tekstu.";
-        return;
-      }
-
-      // Jeśli nie wstawiłeś danych — nie rób nic (brak mieszania)
-      if (
-        !CONTENTFUL_SPACE_ID || CONTENTFUL_SPACE_ID === "WSTAW_SPACE_ID" ||
-        !CONTENTFUL_CDA_TOKEN || CONTENTFUL_CDA_TOKEN === "WSTAW_CONTENT_DELIVERY_TOKEN"
-      ) {
-        container.innerHTML = "Brak konfiguracji źródła treści.";
+        container.innerHTML = "Nie znaleziono tekstu (brak parametru id).";
         return;
       }
 
       try {
         const url =
-          `https://cdn.contentful.com/spaces/${CONTENTFUL_SPACE_ID}` +
-          `/environments/${CONTENTFUL_ENV}/entries/${encodeURIComponent(entryId)}` +
-          `?access_token=${encodeURIComponent(CONTENTFUL_CDA_TOKEN)}`;
+          `https://cdn.contentful.com/spaces/${CF_SPACE_ID}` +
+          `/environments/${CF_ENV_ID}/entries/${encodeURIComponent(entryId)}` +
+          `?access_token=${encodeURIComponent(CF_CDA_TOKEN)}`;
 
-        const response = await fetch(url, { cache: "no-store" });
-        if (!response.ok) {
-          container.innerHTML = "Nie znaleziono tekstu.";
+        const res = await fetch(url, { cache: "no-store" });
+        if (!res.ok) {
+          container.innerHTML = "Nie znaleziono tekstu (błąd pobierania).";
           return;
         }
 
-        const entry = await response.json();
+        const entry = await res.json();
         const fields = entry.fields || {};
 
-        const title = fields.title || "Tekst";
-        const body = fields[FIELD_BODY_ID] || "";
+        const title = fields[FIELD_TITLE_ID] || "Tekst";
+        const rich  = fields[FIELD_RICH_ID];
 
-        // Render: tytuł + body jako markdown
-        container.innerHTML = `<h1>${escapeHtml(title)}</h1>` + marked.parse(String(body));
+        // renderer z UMD:
+        const renderer = window.contentfulRichTextHtmlRenderer;
+        if (!renderer || typeof renderer.documentToHtmlString !== "function") {
+          container.innerHTML = `<h1>${escapeHtml(title)}</h1><p>Błąd renderer-a Rich Text.</p>`;
+          return;
+        }
+
+        const htmlBody = rich ? renderer.documentToHtmlString(rich) : "<p>(Brak treści)</p>";
+
+        container.innerHTML = `<h1>${escapeHtml(title)}</h1>` + htmlBody;
         document.title = title + " - P. A. Barczewska";
       } catch (e) {
         container.innerHTML = "Błąd podczas ładowania tekstu.";
