@@ -95,6 +95,7 @@ footer{ color:rgba(255,255,255,0.85); font-size:0.9rem; text-align:center; paddi
       <p>Każda decyzja ma swój moment graniczny. Ten, w którym ciało wie wcześniej niż my…</p>
       <a class="read-more" href="teksty/miedzy-strachem.html">Czytaj dalej</a>
     </article>
+
     <div id="dynamic-posts"></div>
   </section>
 </main>
@@ -109,31 +110,97 @@ footer{ color:rgba(255,255,255,0.85); font-size:0.9rem; text-align:center; paddi
   <p>© <span id="year"></span> P. A. Barczewska</p>
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
   document.getElementById("year").textContent = new Date().getFullYear();
-  async function loadDynamicPosts() {
-    const container = document.getElementById('dynamic-posts');
-    try {
-      const response = await fetch(`https://api.github.com/repos/pbarczewska/pbarczewska.github.io/contents/teksty`);
-      const files = await response.json();
-      for (const file of files) {
-        if (file.name.endsWith('.md')) {
-          const res = await fetch(file.download_url);
-          const content = await res.text();
-          const titleMatch = content.match(/^title:\s*(.*)$/m);
-          const title = titleMatch ? titleMatch[1].replace(/['"]/g, "") : file.name.replace('.md', '');
-          const bodyContent = content.split('---').pop().trim();
-          const article = document.createElement('article');
-          article.className = 'post-preview';
-          article.innerHTML = `<h3>${title}</h3><p>${marked.parse(bodyContent.substring(0, 150))}...</p><a class="read-more" href="view.html?post=${file.name}">Czytaj dalej</a>`;
-          container.appendChild(article);
-        }
-      }
-    } catch (e) {}
+
+  // =========================
+  // CONTENTFUL (DYNAMIC POSTS)
+  // =========================
+  // Wklej tutaj SWOJE dane z Contentful:
+  // - SPACE_ID: znajdziesz w Settings > General (Space ID)
+  // - CDA_TOKEN: Content Delivery API token (Settings > API keys > Content Delivery API - access token)
+  //
+  // UWAGA: token CDA w frontendzie to normalne w tej architekturze (to nie jest token do edycji).
+  // Nie używaj CMA tokenów (Management).
+  const CONTENTFUL_SPACE_ID = "WSTAW_SPACE_ID";
+  const CONTENTFUL_ENV = "master";
+  const CONTENTFUL_CDA_TOKEN = "WSTAW_CONTENT_DELIVERY_TOKEN";
+
+  // Content type ID (nie nazwa). Najczęściej: "article" albo "post".
+  // Wejdź w Content model -> Twój typ -> po prawej zobacz "API Identifier".
+  const CONTENT_TYPE_ID = "article";
+
+  // Pole z treścią:
+  // - jeśli dodałeś Long text: Field ID = body
+  // - jak chcesz inny, zmień tu:
+  const FIELD_BODY_ID = "body";
+
+  function escapeHtml(s) {
+    return String(s ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
   }
+
+  function makeExcerpt(text, maxLen = 150) {
+    const clean = String(text ?? "").replace(/\s+/g, " ").trim();
+    if (!clean) return "";
+    return clean.length > maxLen ? clean.slice(0, maxLen).trim() + "…" : clean;
+  }
+
+  async function loadDynamicPosts() {
+    const container = document.getElementById("dynamic-posts");
+
+    // Jeśli nie wstawiłeś danych — nie rób nic (zero zmian w UI)
+    if (
+      !CONTENTFUL_SPACE_ID || CONTENTFUL_SPACE_ID === "WSTAW_SPACE_ID" ||
+      !CONTENTFUL_CDA_TOKEN || CONTENTFUL_CDA_TOKEN === "WSTAW_CONTENT_DELIVERY_TOKEN" ||
+      !CONTENT_TYPE_ID
+    ) return;
+
+    try {
+      const url =
+        `https://cdn.contentful.com/spaces/${CONTENTFUL_SPACE_ID}` +
+        `/environments/${CONTENTFUL_ENV}/entries` +
+        `?access_token=${encodeURIComponent(CONTENTFUL_CDA_TOKEN)}` +
+        `&content_type=${encodeURIComponent(CONTENT_TYPE_ID)}` +
+        `&order=-sys.createdAt` +
+        `&limit=10`;
+
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) return;
+
+      const data = await res.json();
+      const items = Array.isArray(data.items) ? data.items : [];
+      if (!items.length) return;
+
+      for (const entry of items) {
+        const fields = entry.fields || {};
+        const title = fields.title || "Bez tytułu";
+        const body = fields[FIELD_BODY_ID] || "";
+        const excerpt = makeExcerpt(body, 150);
+
+        const article = document.createElement("article");
+        article.className = "post-preview";
+        article.innerHTML = `
+          <h3>${escapeHtml(title)}</h3>
+          <p>${escapeHtml(excerpt)}</p>
+          <a class="read-more" href="view.html?id=${encodeURIComponent(entry.sys.id)}">Czytaj dalej</a>
+        `;
+        container.appendChild(article);
+      }
+    } catch (e) {
+      // celowo cisza: nie zmieniamy UI i nie wywalamy błędów użytkownikowi
+    }
+  }
+
   loadDynamicPosts();
 
+  // =========================
+  // SECRET ADMIN ENTRY
+  // =========================
   const logo = document.getElementById("secretLogo");
   let clicks = 0, timer = null;
   const handler = (e) => {
