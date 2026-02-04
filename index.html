@@ -118,12 +118,24 @@ footer{ color:rgba(255,255,255,0.85); font-size:0.9rem; text-align:center; paddi
 <script>
   document.getElementById("year").textContent = new Date().getFullYear();
 
-  // ===== Contentful (CDA) =====
+  // =========================
+  // CONTENTFUL (KONKRET: działający CDA token)
+  // =========================
   const SPACE_ID = "4njr98q3c6g4";
-  const ENV = "master"; // nie zgadujemy; jeśli chcesz inne env, zmieniasz tu
-  const TOKEN = "PASTE_YOUR_CDA_TOKEN_HERE"; // <- wklej "Content Delivery API - access token"
+  const ENV = "master";
+  const TOKEN = "GjcqWIsIud_ukRdgbQPJrzwsRbwkBxO4g5K6-SMwE2Y"; // Content Delivery API token
   const TYPE = "article";
-  const LOCALE = "en-US"; // u Ciebie treści siedzą w en-US
+  const LOCALE = "en-US"; // u Ciebie wpisy są w en-US
+
+  function richToText(r){
+    if(!r || !r.content) return "";
+    const out=[];
+    (function walk(n){
+      if(n && n.nodeType==="text" && typeof n.value==="string") out.push(n.value);
+      if(n && Array.isArray(n.content)) n.content.forEach(walk);
+    })(r);
+    return out.join(" ").replace(/\s+/g," ").trim();
+  }
 
   function escapeHtml(str){
     return String(str)
@@ -134,73 +146,59 @@ footer{ color:rgba(255,255,255,0.85); font-size:0.9rem; text-align:center; paddi
       .replaceAll("'","&#039;");
   }
 
-  function richToText(r){
-    if(!r || !r.content) return "";
-    const out=[];
-    (function walk(n){
-      if(!n) return;
-      if(n.nodeType==="text" && typeof n.value==="string") out.push(n.value);
-      if(Array.isArray(n.content)) n.content.forEach(walk);
-    })(r);
-    return out.join(" ").replace(/\s+/g," ").trim();
-  }
-
   async function loadDynamicPosts(){
     const box = document.getElementById("dynamic-posts");
     if(!box) return;
 
-    // NIE ruszamy wyglądu: jak API padnie/0 wpisów, po prostu nic nie dokładamy
     const url =
       `https://cdn.contentful.com/spaces/${encodeURIComponent(SPACE_ID)}` +
       `/environments/${encodeURIComponent(ENV)}` +
       `/entries?access_token=${encodeURIComponent(TOKEN)}` +
       `&content_type=${encodeURIComponent(TYPE)}` +
       `&locale=${encodeURIComponent(LOCALE)}` +
-      `&order=-sys.createdAt&limit=25`;
+      `&order=-sys.createdAt&limit=50`;
 
     try{
-      const res = await fetch(url, { cache: "no-store" });
+      const res = await fetch(url, { cache:"no-store" });
       if(!res.ok) return;
 
       const data = await res.json();
-      if(!data || !Array.isArray(data.items) || data.items.length === 0) return;
+      if(!data || !Array.isArray(data.items) || !data.items.length) return;
 
-      for(const item of data.items){
-        const title = (item.fields && typeof item.fields.title === "string") ? item.fields.title : "";
-        const rich = item.fields ? item.fields.content : null;
-        const text = richToText(rich);
-
-        if(!title) continue;
+      data.items.forEach(item=>{
+        const title = item?.fields?.title ? String(item.fields.title) : "";
+        const text  = richToText(item?.fields?.content);
+        const id    = item?.sys?.id ? String(item.sys.id) : "";
+        if(!title || !id) return;
 
         const el = document.createElement("article");
         el.className = "post-preview";
         el.innerHTML =
           `<h3>${escapeHtml(title)}</h3>` +
           `<p>${escapeHtml(text.slice(0,160))}${text ? "…" : ""}</p>` +
-          `<a class="read-more" href="view.html?id=${encodeURIComponent(item.sys.id)}">Czytaj dalej</a>`;
+          `<a class="read-more" href="view.html?id=${encodeURIComponent(id)}">Czytaj dalej</a>`;
         box.appendChild(el);
-      }
+      });
     }catch(e){
-      // celowo cisza
+      // celowo cisza: wygląd ma się nie psuć
     }
   }
 
   loadDynamicPosts();
 
-  // 4x logo -> Contentful entries
+  // 4x logo → Contentful entries
   (function setupSecretLogo(){
     const logo = document.getElementById("secretLogo");
     if(!logo) return;
 
-    let c=0, t=null;
-    const handler = ()=>{
+    let c=0,t=null;
+    const handler=()=>{
       c++; clearTimeout(t);
       t=setTimeout(()=>c=0,1500);
       if(c>=4){
-        location.href = `https://app.contentful.com/spaces/${SPACE_ID}/environments/${encodeURIComponent(ENV)}/entries`;
+        location.href=`https://app.contentful.com/spaces/${encodeURIComponent(SPACE_ID)}/environments/${encodeURIComponent(ENV)}/entries`;
       }
     };
-
     logo.addEventListener("click", handler);
     logo.addEventListener("touchend", handler);
   })();
