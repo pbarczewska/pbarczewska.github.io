@@ -84,7 +84,7 @@ footer{ color:rgba(255,255,255,0.85); font-size:0.9rem; text-align:center; paddi
     <p class="work-status">Publikuję swoje teksty i jednocześnie pracuję nad kolejnymi projektami. Niektóre historie są zamknięte, inne wciąż się piszą — bo proces twórczy jest dla mnie równie ważny jak efekt końcowy.</p>
   </section>
 
-  <section>
+  <section id="teksty-sekcja">
     <h2>Teksty</h2>
 
     <article class="post-preview">
@@ -123,7 +123,7 @@ footer{ color:rgba(255,255,255,0.85); font-size:0.9rem; text-align:center; paddi
   function richToText(doc) {
     if (!doc || !doc.content) return "";
     return doc.content
-      .map(node => {
+      .map(function(node) {
         if (node.nodeType === "text") return node.value;
         if (node.content) return richToText(node);
         return "";
@@ -133,18 +133,17 @@ footer{ color:rgba(255,255,255,0.85); font-size:0.9rem; text-align:center; paddi
 
   async function loadDynamicPosts() {
     const box = document.getElementById("dynamic-posts");
-    // Kluczowe: dodajemy locale=* aby pobrać wszystkie wersje językowe
-    const url = `https://cdn.contentful.com/spaces/${SPACE_ID}/environments/master/entries?access_token=${TOKEN}&content_type=${TYPE}&locale=*&order=-sys.createdAt`;
+    if (!box) return;
+
+    const url = "https://cdn.contentful.com/spaces/" + SPACE_ID + "/environments/master/entries?access_token=" + TOKEN + "&content_type=" + TYPE + "&locale=*&order=-sys.createdAt";
 
     try {
       const res = await fetch(url);
       const data = await res.json();
       
       if (data.items && data.items.length > 0) {
-        data.items.forEach(item => {
+        data.items.forEach(function(item) {
           const fields = item.fields;
-          
-          // Pobieramy pierwszy dostępny język dla tytułu i treści
           const firstLocale = Object.keys(fields.title)[0];
           
           const title = fields.title[firstLocale];
@@ -154,68 +153,29 @@ footer{ color:rgba(255,255,255,0.85); font-size:0.9rem; text-align:center; paddi
 
           const art = document.createElement("article");
           art.className = "post-preview";
-          art.innerHTML = `
-            <h3>${title}</h3>
-            <p>${shortText}</p>
-            <a class="read-more" href="view.html?id=${item.sys.id}">Czytaj dalej</a>
-          `;
-          box.appendChild(art);
-        });
-      }
-    } catch (e) {
-      console.error("Błąd połączenia:", e);
-    }
-  }
-
-  loadDynamicPosts();
-
-  // 4x klik Logo
-  let count = 0;
-  document.getElementById("secretLogo").onclick = () => {
-    count++;
-    if(count === 4) {
-      window.location.href = `https://app.contentful.com/spaces/${SPACE_ID}/entries`;
-    }
-    setTimeout(() => { count = 0; }, 2000);
-  };
-</script>
-
-      
-      if (data.items && data.items.length > 0) {
-        data.items.forEach(item => {
-          // Pobieramy pola, biorąc pod uwagę że przy locale=* struktura to fields.title['pl'] lub fields.title['en-US']
-          const fields = item.fields;
-          const localeKey = Object.keys(fields.title)[0];
           
-          const title = fields.title[localeKey];
-          const rawContent = fields.content[localeKey];
-          const text = richToText(rawContent).slice(0, 160) + "...";
-
-          const art = document.createElement("article");
-          art.className = "post-preview";
-          art.innerHTML = `
-            <h3>${title}</h3>
-            <p>${text}</p>
-            <a class="read-more" href="view.html?id=${item.sys.id}">Czytaj dalej</a>
-          `;
+          art.innerHTML = 
+            "<h3>" + title + "</h3>" +
+            "<p>" + shortText + "</p>" +
+            "<a class='read-more' href='view.html?id=" + item.sys.id + "'>Czytaj dalej</a>";
+          
           box.appendChild(art);
         });
       }
     } catch (e) {
-      console.error("Błąd ładowania Contentful:", e);
+      console.error("Błąd ładowania:", e);
     }
   }
 
   loadDynamicPosts();
 
-  // 4x klik Logo (REQ-4)
   let count = 0;
-  document.getElementById("secretLogo").onclick = () => {
+  document.getElementById("secretLogo").onclick = function() {
     count++;
     if(count === 4) {
-      window.location.href = `https://app.contentful.com/spaces/${SPACE_ID}/entries`;
+      window.location.href = "https://app.contentful.com/spaces/" + SPACE_ID + "/entries";
     }
-    setTimeout(() => { count = 0; }, 2000);
+    setTimeout(function() { count = 0; }, 2000);
   };
 </script>
 </body>
