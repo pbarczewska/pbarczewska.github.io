@@ -87,7 +87,6 @@ footer{ color:rgba(255,255,255,0.85); font-size:0.9rem; text-align:center; paddi
   <section>
     <h2>Teksty</h2>
 
-    <!-- RĘCZNE WPISY – ZOSTAJĄ -->
     <article class="post-preview">
       <h3>Najlepsze rzeczy dzieją się w ciszy</h3>
       <p>Czasem nie potrzeba odpowiedzi. Wystarczy zostać na chwilę w miejscu, w którym coś zaczyna być prawdziwe…</p>
@@ -100,7 +99,6 @@ footer{ color:rgba(255,255,255,0.85); font-size:0.9rem; text-align:center; paddi
       <a class="read-more" href="teksty/miedzy-strachem.html">Czytaj dalej</a>
     </article>
 
-    <!-- CONTENTFUL -->
     <div id="dynamic-posts"></div>
   </section>
 </main>
@@ -118,91 +116,66 @@ footer{ color:rgba(255,255,255,0.85); font-size:0.9rem; text-align:center; paddi
 <script>
   document.getElementById("year").textContent = new Date().getFullYear();
 
-  // =========================
-  // CONTENTFUL (KONKRET: działający CDA token)
-  // =========================
   const SPACE_ID = "4njr98q3c6g4";
-  const ENV = "master";
-  const TOKEN = "GjcqWIsIud_ukRdgbQPJrzwsRbwkBxO4g5K6-SMwE2Y"; // Content Delivery API token
-  const TYPE = "article";
-  const LOCALE = "en-US"; // u Ciebie wpisy są w en-US
+  const TOKEN    = "GjcqWIsIud_ukRdgbQPJrzwsRbwkBxO4g5K6-SMwE2Y";
+  const TYPE     = "article"; 
 
-  function richToText(r){
-    if(!r || !r.content) return "";
-    const out=[];
-    (function walk(n){
-      if(n && n.nodeType==="text" && typeof n.value==="string") out.push(n.value);
-      if(n && Array.isArray(n.content)) n.content.forEach(walk);
-    })(r);
-    return out.join(" ").replace(/\s+/g," ").trim();
+  function richToText(doc) {
+    if (!doc || !doc.content) return "";
+    return doc.content
+      .map(node => {
+        if (node.nodeType === "text") return node.value;
+        if (node.content) return richToText(node);
+        return "";
+      })
+      .join(" ");
   }
 
-  function escapeHtml(str){
-    return String(str)
-      .replaceAll("&","&amp;")
-      .replaceAll("<","&lt;")
-      .replaceAll(">","&gt;")
-      .replaceAll('"',"&quot;")
-      .replaceAll("'","&#039;");
-  }
-
-  async function loadDynamicPosts(){
+  async function loadDynamicPosts() {
     const box = document.getElementById("dynamic-posts");
-    if(!box) return;
+    // Używamy locale=* aby pobrać treść niezależnie od ustawionego języka
+    const url = `https://cdn.contentful.com/spaces/${SPACE_ID}/environments/master/entries?access_token=${TOKEN}&content_type=${TYPE}&locale=*&order=-sys.createdAt`;
 
-    const url =
-      `https://cdn.contentful.com/spaces/${encodeURIComponent(SPACE_ID)}` +
-      `/environments/${encodeURIComponent(ENV)}` +
-      `/entries?access_token=${encodeURIComponent(TOKEN)}` +
-      `&content_type=${encodeURIComponent(TYPE)}` +
-      `&locale=${encodeURIComponent(LOCALE)}` +
-      `&order=-sys.createdAt&limit=50`;
-
-    try{
-      const res = await fetch(url, { cache:"no-store" });
-      if(!res.ok) return;
-
+    try {
+      const res = await fetch(url);
       const data = await res.json();
-      if(!data || !Array.isArray(data.items) || !data.items.length) return;
+      
+      if (data.items && data.items.length > 0) {
+        data.items.forEach(item => {
+          // Pobieramy pola, biorąc pod uwagę że przy locale=* struktura to fields.title['pl'] lub fields.title['en-US']
+          const fields = item.fields;
+          const localeKey = Object.keys(fields.title)[0];
+          
+          const title = fields.title[localeKey];
+          const rawContent = fields.content[localeKey];
+          const text = richToText(rawContent).slice(0, 160) + "...";
 
-      data.items.forEach(item=>{
-        const title = item?.fields?.title ? String(item.fields.title) : "";
-        const text  = richToText(item?.fields?.content);
-        const id    = item?.sys?.id ? String(item.sys.id) : "";
-        if(!title || !id) return;
-
-        const el = document.createElement("article");
-        el.className = "post-preview";
-        el.innerHTML =
-          `<h3>${escapeHtml(title)}</h3>` +
-          `<p>${escapeHtml(text.slice(0,160))}${text ? "…" : ""}</p>` +
-          `<a class="read-more" href="view.html?id=${encodeURIComponent(id)}">Czytaj dalej</a>`;
-        box.appendChild(el);
-      });
-    }catch(e){
-      // celowo cisza: wygląd ma się nie psuć
+          const art = document.createElement("article");
+          art.className = "post-preview";
+          art.innerHTML = `
+            <h3>${title}</h3>
+            <p>${text}</p>
+            <a class="read-more" href="view.html?id=${item.sys.id}">Czytaj dalej</a>
+          `;
+          box.appendChild(art);
+        });
+      }
+    } catch (e) {
+      console.error("Błąd ładowania Contentful:", e);
     }
   }
 
   loadDynamicPosts();
 
-  // 4x logo → Contentful entries
-  (function setupSecretLogo(){
-    const logo = document.getElementById("secretLogo");
-    if(!logo) return;
-
-    let c=0,t=null;
-    const handler=()=>{
-      c++; clearTimeout(t);
-      t=setTimeout(()=>c=0,1500);
-      if(c>=4){
-        location.href=`https://app.contentful.com/spaces/${encodeURIComponent(SPACE_ID)}/environments/${encodeURIComponent(ENV)}/entries`;
-      }
-    };
-    logo.addEventListener("click", handler);
-    logo.addEventListener("touchend", handler);
-  })();
+  // 4x klik Logo (REQ-4)
+  let count = 0;
+  document.getElementById("secretLogo").onclick = () => {
+    count++;
+    if(count === 4) {
+      window.location.href = `https://app.contentful.com/spaces/${SPACE_ID}/entries`;
+    }
+    setTimeout(() => { count = 0; }, 2000);
+  };
 </script>
-
 </body>
 </html>
