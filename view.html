@@ -33,10 +33,10 @@
   </article>
 
   <script>
-    // === CONTENTFUL (ten sam token co w index) ===
+    // === Contentful: WKLEJONE NA STAŁE (nic nie wpisujesz) ===
     const CONTENTFUL_SPACE_ID = "4njr98q3c6g4";
     const CONTENTFUL_ENV = "master";
-    const CONTENTFUL_CDA_TOKEN = "WKLEJ_TUTAJ_CDA_TOKEN";
+    const CONTENTFUL_CDA_TOKEN = "FqnzOZKFLbxgkOlF35AU9326HVpykJ16jtuHc10E98";
 
     async function loadFullPost() {
       const params = new URLSearchParams(window.location.search);
@@ -45,10 +45,6 @@
 
       if (!entryId) {
         container.innerHTML = "Nie znaleziono tekstu.";
-        return;
-      }
-      if (!CONTENTFUL_CDA_TOKEN || CONTENTFUL_CDA_TOKEN === "WKLEJ_TUTAJ_CDA_TOKEN") {
-        container.innerHTML = "Brak konfiguracji Contentful (token).";
         return;
       }
 
@@ -63,8 +59,8 @@
           container.innerHTML = "Błąd podczas ładowania tekstu.";
           return;
         }
-        const data = await res.json();
 
+        const data = await res.json();
         const title = data.fields && data.fields.title ? String(data.fields.title) : "Tekst";
         const rich = data.fields && data.fields.content ? data.fields.content : null;
 
@@ -84,7 +80,7 @@
         .replaceAll("'", "&#039;");
     }
 
-    // Minimalny renderer Contentful Rich Text -> HTML (wystarczy na akapity, nagłówki, listy, linki)
+    // Contentful Rich Text -> HTML (podstawowe elementy, bez zmiany wyglądu strony)
     function richTextToHtml(rich) {
       if (!rich || !Array.isArray(rich.content)) return "";
 
@@ -93,7 +89,6 @@
 
         if (node.nodeType === "text") {
           let text = escapeHtml(node.value || "");
-          // marks (bold/italic/underline)
           if (Array.isArray(node.marks)) {
             for (const m of node.marks) {
               if (m.type === "bold") text = `<strong>${text}</strong>`;
