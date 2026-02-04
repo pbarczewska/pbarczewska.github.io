@@ -93,19 +93,27 @@ footer{ color:rgba(255,255,255,0.85); font-size:0.9rem; text-align:center; paddi
   const TOKEN    = "GjcqWIsIud_ukRdgbQPJrzwsRbwkBxO4g5K6-SMwE2Y";
   const TYPE     = "article"; 
 
+  // Funkcja, która bezpiecznie zamienia Rich Text z Contentful na zwykły tekst
   function richToText(doc) {
     if (!doc || !doc.content) return "";
     var output = "";
-    doc.content.forEach(function(node) {
-      if (node.nodeType === "text") output += node.value;
-      else if (node.content) output += richToText(node);
-    });
+    try {
+      doc.content.forEach(function(node) {
+        if (node.nodeType === "text") {
+          output += node.value;
+        } else if (node.content) {
+          output += richToText(node);
+        }
+      });
+    } catch (err) { console.log("Błąd RichText:", err); }
     return output;
   }
 
   async function loadDynamicPosts() {
     var box = document.getElementById("dynamic-posts");
     if (!box) return;
+
+    // Dodajemy locale=* aby pobrać wszystkie wersje językowe
     var url = "https://cdn.contentful.com/spaces/" + SPACE_ID + "/environments/master/entries?access_token=" + TOKEN + "&content_type=" + TYPE + "&locale=*&order=-sys.createdAt";
 
     try {
@@ -115,23 +123,45 @@ footer{ color:rgba(255,255,255,0.85); font-size:0.9rem; text-align:center; paddi
       if (data.items && data.items.length > 0) {
         data.items.forEach(function(item) {
           var fields = item.fields;
-          var loc = Object.keys(fields.title)[0];
+          // Znajdź pierwszy dostępny język dla tytułu i treści
+          var loc = fields.title ? Object.keys(fields.title)[0] : null;
           
+          if (!loc) return; // Pomiń jeśli nie ma nawet tytułu
+
           var title = fields.title[loc] || "Bez tytułu";
-          var contentRaw = fields.content ? fields.content[loc] : null;
-          var fullText = richToText(contentRaw);
-          var shortText = fullText ? fullText.substring(0, 160) + "..." : "Kliknij, aby przeczytać treść...";
+          var rawContent = fields.content ? fields.content[loc] : null;
+          var fullText = richToText(rawContent);
+          
+          // Bezpieczne skracanie tekstu - jeśli fullText jest pusty, da pusty ciąg
+          var shortText = (fullText || "").substring(0, 160);
+          if (fullText && fullText.length > 160) shortText += "...";
 
           var art = document.createElement("article");
           art.className = "post-preview";
+          
+          // Budujemy HTML tradycyjną metodą, żeby uniknąć błędów ze znaczkami ` i $
           art.innerHTML = "<h3>" + title + "</h3>" +
-                          "<p>" + shortText + "</p>" +
+                          "<p>" + (shortText || "Kliknij 'Czytaj dalej', aby zobaczyć treść.") + "</p>" +
                           "<a class='read-more' href='view.html?id=" + item.sys.id + "'>Czytaj dalej</a>";
           
           box.appendChild(art);
         });
       }
-    } catch (e) { console.error("Błąd:", e); }
+    } catch (e) { 
+      console.error("Błąd połączenia z Contentful:", e); 
+    }
   }
+
   loadDynamicPosts();
+
+  // 4 kliknięcia w logo
+  var count = 0;
+  var logo = document.getElementById("secretLogo");
+  if (logo) {
+    logo.onclick = function() {
+      count++;
+      if(count === 4) window.location.href = "https://app.contentful.com/spaces/" + SPACE_ID + "/entries";
+      setTimeout(function(){ count = 0; }, 2000);
+    };
+  }
 </script>
