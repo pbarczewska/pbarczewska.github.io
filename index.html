@@ -88,23 +88,50 @@ footer{ color:rgba(255,255,255,0.85); font-size:0.9rem; text-align:center; paddi
 </footer>
 <script>
   document.getElementById("year").textContent = new Date().getFullYear();
-  const SPACE_ID = "4njr98q3c6g4", TOKEN = "GjcqWIsIud_ukRdgbQPJrzwsRbwkBxO4g5K6-SMwE2Y", TYPE = "article";
-  function richToText(d){if(!d||!d.content)return "";var o="";d.content.forEach(function(n){if(n.nodeType==="text")o+=n.value;else if(n.content)o+=richToText(n);});return o;}
-  async function loadDynamicPosts(){
-    var b=document.getElementById("dynamic-posts"), u="https://cdn.contentful.com/spaces/"+SPACE_ID+"/environments/master/entries?access_token="+TOKEN+"&content_type="+TYPE+"&locale=*&order=-sys.createdAt";
-    try{
-      var r=await fetch(u), d=await r.json();
-      if(d.items&&d.items.length>0){
-        d.items.forEach(function(i){
-          var f=i.fields, loc=Object.keys(f.title)[0], t=f.title[loc], txt=richToText(f.content[loc]).substring(0,160)+"...";
-          var a=document.createElement("article"); a.className="post-preview";
-          a.innerHTML="<h3>"+t+"</h3><p>"+txt+"</p><a class='read-more' href='view.html?id="+i.sys.id+"'>Czytaj dalej</a>";
-          b.appendChild(a);
+
+  const SPACE_ID = "4njr98q3c6g4";
+  const TOKEN    = "GjcqWIsIud_ukRdgbQPJrzwsRbwkBxO4g5K6-SMwE2Y";
+  const TYPE     = "article"; 
+
+  function richToText(doc) {
+    if (!doc || !doc.content) return "";
+    var output = "";
+    doc.content.forEach(function(node) {
+      if (node.nodeType === "text") output += node.value;
+      else if (node.content) output += richToText(node);
+    });
+    return output;
+  }
+
+  async function loadDynamicPosts() {
+    var box = document.getElementById("dynamic-posts");
+    if (!box) return;
+    var url = "https://cdn.contentful.com/spaces/" + SPACE_ID + "/environments/master/entries?access_token=" + TOKEN + "&content_type=" + TYPE + "&locale=*&order=-sys.createdAt";
+
+    try {
+      var res = await fetch(url);
+      var data = await res.json();
+      
+      if (data.items && data.items.length > 0) {
+        data.items.forEach(function(item) {
+          var fields = item.fields;
+          var loc = Object.keys(fields.title)[0];
+          
+          var title = fields.title[loc] || "Bez tytułu";
+          var contentRaw = fields.content ? fields.content[loc] : null;
+          var fullText = richToText(contentRaw);
+          var shortText = fullText ? fullText.substring(0, 160) + "..." : "Kliknij, aby przeczytać treść...";
+
+          var art = document.createElement("article");
+          art.className = "post-preview";
+          art.innerHTML = "<h3>" + title + "</h3>" +
+                          "<p>" + shortText + "</p>" +
+                          "<a class='read-more' href='view.html?id=" + item.sys.id + "'>Czytaj dalej</a>";
+          
+          box.appendChild(art);
         });
       }
-    }catch(e){console.log(e);}
+    } catch (e) { console.error("Błąd:", e); }
   }
   loadDynamicPosts();
 </script>
-</body>
-</html>
