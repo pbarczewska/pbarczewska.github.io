@@ -133,12 +133,53 @@ footer{ color:rgba(255,255,255,0.85); font-size:0.9rem; text-align:center; paddi
 
   async function loadDynamicPosts() {
     const box = document.getElementById("dynamic-posts");
-    // Używamy locale=* aby pobrać treść niezależnie od ustawionego języka
+    // Kluczowe: dodajemy locale=* aby pobrać wszystkie wersje językowe
     const url = `https://cdn.contentful.com/spaces/${SPACE_ID}/environments/master/entries?access_token=${TOKEN}&content_type=${TYPE}&locale=*&order=-sys.createdAt`;
 
     try {
       const res = await fetch(url);
       const data = await res.json();
+      
+      if (data.items && data.items.length > 0) {
+        data.items.forEach(item => {
+          const fields = item.fields;
+          
+          // Pobieramy pierwszy dostępny język dla tytułu i treści
+          const firstLocale = Object.keys(fields.title)[0];
+          
+          const title = fields.title[firstLocale];
+          const rawContent = fields.content[firstLocale];
+          const fullText = richToText(rawContent);
+          const shortText = fullText.slice(0, 160) + (fullText.length > 160 ? "..." : "");
+
+          const art = document.createElement("article");
+          art.className = "post-preview";
+          art.innerHTML = `
+            <h3>${title}</h3>
+            <p>${shortText}</p>
+            <a class="read-more" href="view.html?id=${item.sys.id}">Czytaj dalej</a>
+          `;
+          box.appendChild(art);
+        });
+      }
+    } catch (e) {
+      console.error("Błąd połączenia:", e);
+    }
+  }
+
+  loadDynamicPosts();
+
+  // 4x klik Logo
+  let count = 0;
+  document.getElementById("secretLogo").onclick = () => {
+    count++;
+    if(count === 4) {
+      window.location.href = `https://app.contentful.com/spaces/${SPACE_ID}/entries`;
+    }
+    setTimeout(() => { count = 0; }, 2000);
+  };
+</script>
+
       
       if (data.items && data.items.length > 0) {
         data.items.forEach(item => {
