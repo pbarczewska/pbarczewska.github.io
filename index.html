@@ -159,5 +159,41 @@ fetchPosts();
         setTimeout(() => clicks = 0, 2000);
     };
 </script>
+    const SPACE = "4njr98q3c6g4";
+    const TOKEN = "GjcqWIsIud_ukRdgbQPJrzwsRbwkBxO4g5K6-SMwE2Y";
+
+    async function loadList() {
+        const container = document.getElementById("dynamic-posts");
+        // Pobieramy wpisy z Contentful
+        const url = `https://cdn.contentful.com/spaces/${SPACE}/environments/master/entries?access_token=${TOKEN}&content_type=article&locale=*&order=-sys.createdAt`;
+
+        try {
+            const res = await fetch(url);
+            const data = await res.json();
+            if (data.items && data.items.length > 0) {
+                container.innerHTML = ""; 
+                data.items.forEach(item => {
+                    const f = item.fields;
+                    const lang = f.title['pl'] ? 'pl' : Object.keys(f.title)[0];
+                    const title = f.title[lang];
+
+                    const art = document.createElement("article");
+                    art.className = "post-preview";
+                    // TU JEST KLUCZ: Linkujemy do view.html z ID posta
+                    art.innerHTML = `
+                        <h3>${title}</h3>
+                        <a class="read-more" href="view.html?id=${item.sys.id}">Czytaj dalej</a>
+                    `;
+                    container.appendChild(art);
+                });
+            }
+        } catch (e) {
+            container.innerHTML = "<p>Problem z połączeniem z bazą tekstów.</p>";
+        }
+    }
+    loadList();
+    document.getElementById("year").textContent = new Date().getFullYear();
+</script>
+
 </body>
 </html>
