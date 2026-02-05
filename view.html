@@ -1,124 +1,121 @@
 <!doctype html>
 <html lang="pl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tekst - P. A. Barczewska</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
-<style>
-body{ margin:0; font-family:"Inter",sans-serif; background:#151515; color:#fff; line-height:1.8; background-image:url("../file_000000006408722fa2ddd16807e0f8b7.png"); background-size:cover; background-attachment:fixed; }
-article{ max-width:800px; margin:40px auto; background:rgba(255,255,255,0.85); color:#151515; padding:40px; border-radius:30px; backdrop-filter:blur(10px); }
-h1{ font-family:"Playfair Display",serif; font-size:2.2rem; }
-.back{ display:inline-block; margin-bottom:20px; text-decoration:none; color:#444; font-weight:600; }
-</style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tekst - P. A. Barczewska</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --radius: 35px; --shadow: 0 10px 40px rgba(0,0,0,0.2); }
+        * { box-sizing: border-box; }
+        body { 
+            margin: 0; font-family: "Inter", sans-serif; color: #151515; 
+            background-image: url("file_000000006408722fa2ddd16807e0f8b7.png"); 
+            background-size: cover; background-position: center; background-attachment: fixed; min-height: 100vh; 
+        }
+        body::before { content: ""; position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: -1; }
+        main { max-width: 800px; margin: 40px auto; padding: 0 18px; }
+        
+        .back-link { 
+            display: inline-flex; align-items: center; gap: 8px; color: #fff; 
+            text-decoration: none; margin-bottom: 25px; font-weight: 500; 
+            background: rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px;
+            backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.2); transition: 0.3s;
+        }
+        .back-link:hover { background: rgba(255,255,255,0.2); }
+
+        .article-card { 
+            background: rgba(255,255,255,0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border-radius: var(--radius); padding: 50px 40px; box-shadow: var(--shadow); 
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        h1 { font-family: "Playfair Display", serif; font-size: 2.4rem; margin: 0 0 30px; line-height: 1.2; }
+        .content { line-height: 1.8; font-size: 1.08rem; color: #222; }
+        .content p { margin-bottom: 20px; }
+        .content h2 { font-family: "Playfair Display", serif; margin-top: 35px; }
+        
+        @media (max-width: 600px) {
+            .article-card { padding: 30px 20px; }
+            h1 { font-size: 1.8rem; }
+        }
+    </style>
 </head>
 <body>
-<article>
-  <a href="index.html" class="back">← Wróć do strony głównej</a>
-  <div id="post-content">Ładowanie treści...</div>
-</article>
 
-<script>
-const SPACE_ID = "4njr98q3c6g4", TOKEN = "GjcqWIsIud_ukRdgbQPJrzwsRbwkBxO4g5K6-SMwE2Y";
-const params = new URLSearchParams(window.location.search), ID = params.get("id");
-
-function renderRT(node) {
-  if(!node) return "";
-  if(node.nodeType === "text") return node.value;
-  if(node.nodeType === "paragraph") return "<p>" + (node.content.map(renderRT).join("")) + "</p>";
-  if(node.content) return node.content.map(renderRT).join("");
-  return "";
-}
-
-async function load() {
-  if(!ID) { document.getElementById("post-content").textContent = "Błąd: Brak tekstu."; return; }
-  try {
-    const res = await fetch("https://cdn.contentful.com/spaces/"+SPACE_ID+"/environments/master/entries/"+ID+"?access_token="+TOKEN+"&locale=*");
-    const data = await res.json();
-    const loc = Object.keys(data.fields.title)[0];
-    document.getElementById("post-content").innerHTML = "<h1>"+data.fields.title[loc]+"</h1>" + renderRT(data.fields.content[loc]);
-  } catch(e) { document.getElementById("post-content").textContent = "Nie udało się pobrać tekstu."; }
-}
-load();
+<main>
+    <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Wróć do strony głównej</a>
+    
+    <article class="article-card">
+        <h1 id="post-title">Ładowanie...</h1>
+        <div id="post-content" class="content">
+            <p>Pobieram treść z biblioteki...</p>
+        </div>
+    </article>
+</main>
 
 <script>
     const SPACE = "4njr98q3c6g4";
     const TOKEN = "GjcqWIsIud_ukRdgbQPJrzwsRbwkBxO4g5K6-SMwE2Y";
 
-    // Funkcja do przerabiania "bloków" z Contentful na czytelny HTML
+    // Ekspercki parser Rich Text - zamienia "pudełka" z Contentful na HTML
     function renderNode(node) {
         if (!node) return "";
         if (node.nodeType === "text") return node.value;
+        
         const content = node.content ? node.content.map(renderNode).join("") : "";
+        
         switch (node.nodeType) {
             case "paragraph": return `<p>${content}</p>`;
             case "heading-1": return `<h1>${content}</h1>`;
             case "heading-2": return `<h2>${content}</h2>`;
+            case "unordered-list": return `<ul>${content}</ul>`;
+            case "ordered-list": return `<ol>${content}</ol>`;
+            case "list-item": return `<li>${content}</li>`;
+            case "hr": return `<hr>`;
             default: return content;
         }
     }
 
-    async function loadPost() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const postId = urlParams.get('id'); // Wyciągamy ID z linku
-        const contentBox = document.getElementById("post-content");
-
-        if (!postId) {
-            contentBox.innerHTML = "<p>Błąd: Nie wskazano artykułu.</p>";
-            return;
-        }
-
-        try {
-            const res = await fetch(`https://cdn.contentful.com/spaces/${SPACE}/environments/master/entries/${postId}?access_token=${TOKEN}&locale=*`);
-            const entry = await res.json();
-            const f = entry.fields;
-            const lang = f.title['pl'] ? 'pl' : Object.keys(f.title)[0];
-
-            // Ustawiamy tytuł strony i nagłówek
-            document.title = f.title[lang];
-            const h1 = document.querySelector("h1");
-            if (h1) h1.textContent = f.title[lang];
-
-            // Renderujemy treść Rich Text (to pole 'content' od Pauliny)
-            if (f.content && f.content[lang]) {
-                contentBox.innerHTML = f.content[lang].content.map(renderNode).join("");
-            }
-        } catch (e) {
-            contentBox.innerHTML = "<p>Nie udało się załadować tekstu.</p>";
-        }
-    }
-    loadPost();
-</script>
-
-    async function loadPost() {
+    async function loadFullPost() {
         const urlParams = new URLSearchParams(window.location.search);
         const postId = urlParams.get('id');
-        const contentBox = document.getElementById("post-content"); // MUSISZ mieć div o tym ID w HTML
 
         if (!postId) {
-            contentBox.innerHTML = "<p>Nie znaleziono artykułu.</p>";
+            document.getElementById("post-content").innerHTML = "<p>Nie znaleziono identyfikatora tekstu.</p>";
             return;
         }
 
         try {
-            const response = await fetch(`https://cdn.contentful.com/spaces/${SPACE}/environments/master/entries/${postId}?access_token=${TOKEN}&locale=*`);
+            const url = `https://cdn.contentful.com/spaces/${SPACE}/environments/master/entries/${postId}?access_token=${TOKEN}&locale=*`;
+            const response = await fetch(url);
             const entry = await response.json();
-            const f = entry.fields;
-            const lang = f.title['pl'] ? 'pl' : Object.keys(f.title)[0];
-
-            // Wstawianie tytułu i treści
-            document.title = f.title[lang];
-            document.querySelector("h1").textContent = f.title[lang];
             
-            // Renderowanie treści artykułu
-            contentBox.innerHTML = f.content[lang].content.map(renderNode).join("");
+            if (entry.fields) {
+                const f = entry.fields;
+                // Wykrywanie języka
+                const lang = f.title['pl'] ? 'pl' : Object.keys(f.title)[0];
 
+                // Ustawianie tytułu
+                const titleText = f.title[lang];
+                document.title = titleText + " - P. A. Barczewska";
+                document.getElementById("post-title").textContent = titleText;
+
+                // Renderowanie treści
+                if (f.content && f.content[lang]) {
+                    const htmlContent = f.content[lang].content.map(renderNode).join("");
+                    document.getElementById("post-content").innerHTML = htmlContent;
+                }
+            }
         } catch (error) {
-            contentBox.innerHTML = "<p>Błąd pobierania treści artykułu.</p>";
+            console.error(error);
+            document.getElementById("post-content").innerHTML = "<p>Błąd połączenia. Sprawdź internet lub spróbuj później.</p>";
         }
     }
 
-    loadPost();
+    loadFullPost();
 </script>
 
 </body>
