@@ -40,26 +40,55 @@ async function load() {
   } catch(e) { document.getElementById("post-content").textContent = "Nie udało się pobrać tekstu."; }
 }
 load();
-</script>
+
+<script>
     const SPACE = "4njr98q3c6g4";
     const TOKEN = "GjcqWIsIud_ukRdgbQPJrzwsRbwkBxO4g5K6-SMwE2Y";
 
-    // Ekspercki parser: zamienia obiekt JSON z Contentful na czysty HTML
+    // Funkcja do przerabiania "bloków" z Contentful na czytelny HTML
     function renderNode(node) {
         if (!node) return "";
         if (node.nodeType === "text") return node.value;
-        
         const content = node.content ? node.content.map(renderNode).join("") : "";
-        
         switch (node.nodeType) {
             case "paragraph": return `<p>${content}</p>`;
             case "heading-1": return `<h1>${content}</h1>`;
             case "heading-2": return `<h2>${content}</h2>`;
-            case "unordered-list": return `<ul>${content}</ul>`;
-            case "list-item": return `<li>${content}</li>`;
             default: return content;
         }
     }
+
+    async function loadPost() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const postId = urlParams.get('id'); // Wyciągamy ID z linku
+        const contentBox = document.getElementById("post-content");
+
+        if (!postId) {
+            contentBox.innerHTML = "<p>Błąd: Nie wskazano artykułu.</p>";
+            return;
+        }
+
+        try {
+            const res = await fetch(`https://cdn.contentful.com/spaces/${SPACE}/environments/master/entries/${postId}?access_token=${TOKEN}&locale=*`);
+            const entry = await res.json();
+            const f = entry.fields;
+            const lang = f.title['pl'] ? 'pl' : Object.keys(f.title)[0];
+
+            // Ustawiamy tytuł strony i nagłówek
+            document.title = f.title[lang];
+            const h1 = document.querySelector("h1");
+            if (h1) h1.textContent = f.title[lang];
+
+            // Renderujemy treść Rich Text (to pole 'content' od Pauliny)
+            if (f.content && f.content[lang]) {
+                contentBox.innerHTML = f.content[lang].content.map(renderNode).join("");
+            }
+        } catch (e) {
+            contentBox.innerHTML = "<p>Nie udało się załadować tekstu.</p>";
+        }
+    }
+    loadPost();
+</script>
 
     async function loadPost() {
         const urlParams = new URLSearchParams(window.location.search);
