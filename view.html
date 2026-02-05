@@ -41,5 +41,56 @@ async function load() {
 }
 load();
 </script>
+    const SPACE = "4njr98q3c6g4";
+    const TOKEN = "GjcqWIsIud_ukRdgbQPJrzwsRbwkBxO4g5K6-SMwE2Y";
+
+    // Ekspercki parser: zamienia obiekt JSON z Contentful na czysty HTML
+    function renderNode(node) {
+        if (!node) return "";
+        if (node.nodeType === "text") return node.value;
+        
+        const content = node.content ? node.content.map(renderNode).join("") : "";
+        
+        switch (node.nodeType) {
+            case "paragraph": return `<p>${content}</p>`;
+            case "heading-1": return `<h1>${content}</h1>`;
+            case "heading-2": return `<h2>${content}</h2>`;
+            case "unordered-list": return `<ul>${content}</ul>`;
+            case "list-item": return `<li>${content}</li>`;
+            default: return content;
+        }
+    }
+
+    async function loadPost() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const postId = urlParams.get('id');
+        const contentBox = document.getElementById("post-content"); // MUSISZ mieć div o tym ID w HTML
+
+        if (!postId) {
+            contentBox.innerHTML = "<p>Nie znaleziono artykułu.</p>";
+            return;
+        }
+
+        try {
+            const response = await fetch(`https://cdn.contentful.com/spaces/${SPACE}/environments/master/entries/${postId}?access_token=${TOKEN}&locale=*`);
+            const entry = await response.json();
+            const f = entry.fields;
+            const lang = f.title['pl'] ? 'pl' : Object.keys(f.title)[0];
+
+            // Wstawianie tytułu i treści
+            document.title = f.title[lang];
+            document.querySelector("h1").textContent = f.title[lang];
+            
+            // Renderowanie treści artykułu
+            contentBox.innerHTML = f.content[lang].content.map(renderNode).join("");
+
+        } catch (error) {
+            contentBox.innerHTML = "<p>Błąd pobierania treści artykułu.</p>";
+        }
+    }
+
+    loadPost();
+</script>
+
 </body>
 </html>
