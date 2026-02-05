@@ -83,18 +83,40 @@
     <p>© <span id="year"></span> P. A. Barczewska</p>
 </footer>
 
-<script>
-    document.getElementById("year").textContent = new Date().getFullYear();
+const SPACE_ID = "4njr98q3c6g4";
+const ACCESS_TOKEN = "GjcqWIsIud_ukRdgbQPJrzwsRbwkBxO4g5K6-SMwE2Y";
 
-    const SPACE = "4njr98q3c6g4";
-    const TOKEN = "GjcqWIsIud_ukRdgbQPJrzwsRbwkBxO4g5K6-SMwE2Y";
+async function fetchPosts() {
+    const container = document.getElementById("dynamic-posts");
+    const url = `https://cdn.contentful.com/spaces/${SPACE_ID}/environments/master/entries?access_token=${ACCESS_TOKEN}&content_type=article&locale=*&order=-sys.createdAt`;
 
-    function parseRichText(node) {
-        if (!node) return "";
-        if (node.nodeType === "text") return node.value;
-        if (node.content) return node.content.map(parseRichText).join("");
-        return "";
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        if (data.items) {
+            container.innerHTML = ""; // Czyści statyczne wpisy
+            data.items.forEach(item => {
+                const f = item.fields;
+                // Wybór języka (domyślnie PL)
+                const lang = f.title['pl'] ? 'pl' : Object.keys(f.title)[0];
+                const title = f.title[lang];
+                
+                const article = document.createElement("article");
+                article.className = "post-preview";
+                article.innerHTML = `
+                    <h3>${title}</h3>
+                    <a class="read-more" href="view.html?id=${item.sys.id}">Czytaj dalej</a>
+                `;
+                container.appendChild(article);
+            });
+        }
+    } catch (error) {
+        console.error("Błąd pobierania listy:", error);
     }
+}
+fetchPosts();
+
 
     async function loadContentful() {
         const container = document.getElementById("dynamic-posts");
